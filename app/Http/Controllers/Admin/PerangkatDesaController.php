@@ -1,0 +1,182 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\PerangkatDesa;
+use App\Models\Desa;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+
+class PerangkatDesaController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = PerangkatDesa::with('desa')->current();
+
+        // Filter berdasarkan desa
+        if ($request->filled('desa_id')) {
+            $query->where('desa_id', $request->desa_id);
+        }
+
+        // Filter berdasarkan jabatan
+        if ($request->filled('jabatan')) {
+            $query->where('jabatan', 'like', '%' . $request->jabatan . '%');
+        }
+
+        // Filter berdasarkan status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%{$search}%")
+                  ->orWhere('nik', 'like', "%{$search}%")
+                  ->orWhere('jabatan', 'like', "%{$search}%");
+            });
+        }
+
+        $perangkatDesas = $query->orderBy('jabatan')->orderBy('nama_lengkap')->paginate(20);
+        $desas = Desa::orderBy('nama_desa')->get();
+
+        // Statistik
+        $totalPerangkat = PerangkatDesa::current()->count();
+        $perangkatAktif = PerangkatDesa::aktif()->count();
+        $perangkatTidakAktif = PerangkatDesa::current()->where('status', 'tidak_aktif')->count();
+
+        return view('admin.perangkat-desa.index', compact(
+            'perangkatDesas', 
+            'desas', 
+            'totalPerangkat', 
+            'perangkatAktif', 
+            'perangkatTidakAktif'
+        ));
+    }
+
+    public function create()
+    {
+        $desas = Desa::where('status', 'aktif')->orderBy('nama_desa')->get();
+        return view('admin.perangkat-desa.create', compact('desas'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'desa_id' => 'required|exists:desas,id',
+            'nama_lengkap' => 'required|string|max:255',
+            'jabatan' => 'required|string|max:255',
+            'nik' => 'required|string|size:16|unique:perangkat_desas',
+            'tempat_lahir' => 'required|string|max:255',
+            'tanggal_lahir' => 'required|date|before:today',
+            'jenis_kelamin' => 'required|in:L,P',
+            'pendidikan_terakhir' => 'required|string|max:255',
+            'alamat' => 'required|string',
+            'no_telepon' => 'nullable|string|max:20',
+            'tanggal_mulai_tugas' => 'required|date',
+            'tanggal_akhir_tugas' => 'nullable|date|after:tanggal_mulai_tugas',
+            'sk_pengangkatan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'jobdesk' => 'nullable|string',
+            'status' => 'required|in:aktif,tidak_aktif',
+        ]);
+
+        $data = $request->all();
+        $data['updated_by'] = Auth::id();
+
+        // Upload SK
+        if ($request->hasFile('sk_pengangkatan')) {
+            $data['sk_pengangkatan'] = $request->file('sk_pengangkatan')
+                ->store('sk-perangkat', 'public');
+        }
+
+        $perangkat = PerangkatDesa::create($data);
+
+        // Update desa last_updated_at
+        $perangkat->desa->updateLastUpdated();
+
+        return redirect()->route('admin.perangkat-desa.index')
+            ->with('success', 'Data perangkat desa berhasil ditambahkan.');
+    }
+
+    public function show(PerangkatDesa $perangkatDesa)
+    {
+        $perangkatDesa->load('desa', 'updatedBy');
+        return view('admin.perangkat-desa.show', compact('perangkatDesa'));
+    }
+
+    public function edit(PerangkatDesa $perangkatDesa)
+    {
+        $desas = Desa::where('status', 'aktif')->orderBy('nama_desa')->get();
+        return view('admin.perangkat-desa.edit', compact('perangkatDesa', 'desas'));
+    }
+
+    public function update(Request $request, PerangkatDesa $perangkatDesa)
+    {
+        $request->validate([
+            'desa_id' => 'required|exists:desas,id',
+            'nama_lengkap' => 'required|string|max:255',
+            'jabatan' => 'required|string|max:255',
+            'nik' => 'required|string|size:16|unique:perangkat_desas,nik,' . $perangkatDesa->id,
+            'tempat_lahir' => 'required|string|max:255',
+            'tanggal_lahir' => 'required|date|before:today',
+            'jenis_kelamin' => 'required|in:L,P',
+            'pendidikan_terakhir' => 'required|string|max:255',
+            'alamat' => 'required|string',
+            'no_telepon' => 'nullable|string|max:20',
+            'tanggal_mulai_tugas' => 'required|date',
+            'tanggal_akhir_tugas' => 'nullable|date|after:tanggal_mulai_tugas',
+            'sk_pengangkatan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'jobdesk' => 'nullable|string',
+            'status' => 'required|in:aktif,tidak_aktif',
+            'update_reason' => 'required|string|max:255',
+        ]);
+
+        $data = $request->all();
+        $data['updated_by'] = Auth::id();
+
+        // Upload SK baru
+        if ($request->hasFile('sk_pengangkatan')) {
+            // Hapus file lama
+            if ($perangkatDesa->sk_pengangkatan) {
+                Storage::disk('public')->delete($perangkatDesa->sk_pengangkatan);
+            }
+            $data['sk_pengangkatan'] = $request->file('sk_pengangkatan')
+                ->store('sk-perangkat', 'public');
+        }
+
+        $perangkatDesa->update($data);
+
+        // Update desa last_updated_at
+        $perangkatDesa->desa->updateLastUpdated();
+
+        return redirect()->route('admin.perangkat-desa.index')
+            ->with('success', 'Data perangkat desa berhasil diperbarui.');
+    }
+
+    public function destroy(PerangkatDesa $perangkatDesa)
+    {
+        $desa = $perangkatDesa->desa;
+        
+        // Hapus file SK jika ada
+        if ($perangkatDesa->sk_pengangkatan) {
+            Storage::disk('public')->delete($perangkatDesa->sk_pengangkatan);
+        }
+
+        $perangkatDesa->delete();
+        
+        // Update desa last_updated_at
+        $desa->updateLastUpdated();
+
+        return redirect()->route('admin.perangkat-desa.index')
+            ->with('success', 'Data perangkat desa berhasil dihapus.');
+    }
+
+    public function riwayat(PerangkatDesa $perangkat)
+    {
+        $riwayat = $perangkat->riwayat()->with('changedBy')->orderBy('created_at', 'desc')->paginate(10);
+        return view('admin.perangkat-desa.riwayat', compact('perangkat', 'riwayat'));
+    }
+}
