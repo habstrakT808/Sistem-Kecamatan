@@ -15,22 +15,21 @@ class AsetTanahWarga extends Model
         'nik_pemilik',
         'nomor_sph',
         'luas_tanah',
-        'lokasi_tanah',
+        'nilai_per_meter',
+        'lokasi',
         'jenis_tanah',
         'status_kepemilikan',
-        'nilai_tanah',
-        'tanggal_sph',
-        'scan_sph',
-        'riwayat_kepemilikan',
+        'tanggal_perolehan',
+        'bukti_kepemilikan',
         'keterangan',
     ];
 
     protected function casts(): array
     {
         return [
-            'tanggal_sph' => 'date',
+            'tanggal_perolehan' => 'date',
             'luas_tanah' => 'decimal:2',
-            'nilai_tanah' => 'decimal:2',
+            'nilai_per_meter' => 'decimal:0',
         ];
     }
 
@@ -41,10 +40,10 @@ class AsetTanahWarga extends Model
     }
 
     // Helper methods
-    public function getNilaiPerMeterAttribute()
+    public function getNilaiTanahAttribute()
     {
-        if ($this->luas_tanah > 0 && $this->nilai_tanah > 0) {
-            return $this->nilai_tanah / $this->luas_tanah;
+        if ($this->luas_tanah > 0 && $this->nilai_per_meter > 0) {
+            return $this->luas_tanah * $this->nilai_per_meter;
         }
         return 0;
     }

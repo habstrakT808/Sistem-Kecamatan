@@ -56,7 +56,9 @@ class DashboardController extends Controller
 
         // Nilai Total Aset
         $totalNilaiAsetDesa = AsetDesa::current()->sum('nilai_sekarang');
-        $totalNilaiAsetWarga = AsetTanahWarga::sum('nilai_tanah');
+        
+        // Hitung total nilai aset tanah warga dengan mengalikan luas_tanah dan nilai_per_meter
+        $totalNilaiAsetWarga = AsetTanahWarga::selectRaw('SUM(luas_tanah * nilai_per_meter) as total_nilai')->value('total_nilai') ?? 0;
 
         // Data untuk grafik bulanan (6 bulan terakhir)
         $grafikBulanan = [];
