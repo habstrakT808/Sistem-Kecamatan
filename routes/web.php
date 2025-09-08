@@ -28,7 +28,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/monitoring', [AdminDashboardController::class, 'monitoring'])->name('monitoring');
     Route::get('/statistik', [AdminDashboardController::class, 'statistik'])->name('statistik');
     // Tambahkan di dalam group admin routes
-Route::get('penduduk/download-template', [AdminPendudukController::class, 'downloadTemplate'])->name('penduduk.download-template');
+    Route::get('penduduk/download-template', [AdminPendudukController::class, 'downloadTemplate'])->name('penduduk.download-template');
     
     // Data Desa
     Route::resource('desa', AdminDesaController::class);
@@ -71,6 +71,10 @@ Route::prefix('admin-desa')->name('admin-desa.')->middleware(['auth', 'admin_des
 // Redirect after login
 Route::get('/dashboard', function () {
     $user = Auth::user();
+    
+    if (!$user) {
+        return redirect()->route('login');
+    }
     
     if ($user->role === 'admin_kecamatan') {
         return redirect()->route('admin.dashboard');

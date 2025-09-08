@@ -18,7 +18,7 @@
                 <!-- Navigation Menu -->
                 <ul class="nav flex-column px-2">
                     <li class="nav-item mb-1">
-                        <a class="nav-link text-white sidebar-link rounded-2 {{ request()->routeIs('admin.dashboard') ? 'bg-white bg-opacity-20' : '' }}" 
+                        <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin.dashboard') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
                            href="{{ route('admin.dashboard') }}">
                             <i class="fas fa-tachometer-alt me-2"></i>
                             Dashboard
@@ -26,7 +26,7 @@
                     </li>
                     
                     <li class="nav-item mb-1">
-                        <a class="nav-link text-white sidebar-link rounded-2 {{ request()->routeIs('admin.monitoring') ? 'bg-white bg-opacity-20' : '' }}" 
+                        <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin.monitoring') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
                            href="{{ route('admin.monitoring') }}">
                             <i class="fas fa-map-marked-alt me-2"></i>
                             Monitoring Desa
@@ -34,7 +34,7 @@
                     </li>
                     
                     <li class="nav-item mb-1">
-                        <a class="nav-link text-white sidebar-link rounded-2 {{ request()->routeIs('admin.desa.*') ? 'bg-white bg-opacity-20' : '' }}" 
+                        <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin.desa.*') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
                            href="{{ route('admin.desa.index') }}">
                             <i class="fas fa-home me-2"></i>
                             Data Desa
@@ -42,7 +42,7 @@
                     </li>
                     
                     <li class="nav-item mb-1">
-                        <a class="nav-link text-white sidebar-link rounded-2 {{ request()->routeIs('admin.perangkat-desa.*') ? 'bg-white bg-opacity-20' : '' }}" 
+                        <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin.perangkat-desa.*') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
                            href="{{ route('admin.perangkat-desa.index') }}">
                             <i class="fas fa-users me-2"></i>
                             Perangkat Desa
@@ -50,7 +50,7 @@
                     </li>
                     
                     <li class="nav-item mb-1">
-                        <a class="nav-link text-white sidebar-link rounded-2 {{ request()->routeIs('admin.penduduk.*') ? 'bg-white bg-opacity-20' : '' }}" 
+                        <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin.penduduk.*') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
                            href="{{ route('admin.penduduk.index') }}">
                             <i class="fas fa-user-friends me-2"></i>
                             Data Penduduk
@@ -58,7 +58,7 @@
                     </li>
                     
                     <li class="nav-item mb-1">
-                        <a class="nav-link text-white sidebar-link rounded-2 {{ request()->routeIs('admin.aset-desa.*') ? 'bg-white bg-opacity-20' : '' }}" 
+                        <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin.aset-desa.*') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
                            href="{{ route('admin.aset-desa.index') }}">
                             <i class="fas fa-building me-2"></i>
                             Aset Desa
@@ -66,7 +66,7 @@
                     </li>
                     
                     <li class="nav-item mb-1">
-                        <a class="nav-link text-white sidebar-link rounded-2 {{ request()->routeIs('admin.aset-tanah-warga.*') ? 'bg-white bg-opacity-20' : '' }}" 
+                        <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin.aset-tanah-warga.*') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
                            href="{{ route('admin.aset-tanah-warga.index') }}">
                             <i class="fas fa-map me-2"></i>
                             Aset Tanah Warga
@@ -74,7 +74,7 @@
                     </li>
                     
                     <li class="nav-item mb-1">
-                        <a class="nav-link text-white sidebar-link rounded-2 {{ request()->routeIs('admin.statistik') ? 'bg-white bg-opacity-20' : '' }}" 
+                        <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin.statistik') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
                            href="{{ route('admin.statistik') }}">
                             <i class="fas fa-chart-bar me-2"></i>
                             Statistik Detail
@@ -82,7 +82,7 @@
                     </li>
                     
                     <li class="nav-item mb-1">
-                        <a class="nav-link text-white sidebar-link rounded-2 {{ request()->routeIs('admin.dokumen.*') ? 'bg-white bg-opacity-20' : '' }}" 
+                        <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin.dokumen.*') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
                            href="{{ route('admin.dokumen.index') }}">
                             <i class="fas fa-folder me-2"></i>
                             Dokumen & Bantuan
@@ -90,7 +90,7 @@
                     </li>
                     
                     <li class="nav-item mb-1">
-                        <a class="nav-link text-white sidebar-link rounded-2 {{ request()->routeIs('admin.users.*') ? 'bg-white bg-opacity-20' : '' }}" 
+                        <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin.users.*') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
                            href="{{ route('admin.users.index') }}">
                             <i class="fas fa-user-cog me-2"></i>
                             Manajemen User

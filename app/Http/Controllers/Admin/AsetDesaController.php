@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\AsetDesa;
 use App\Models\Desa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class AsetDesaController extends Controller
 {
@@ -24,7 +26,37 @@ class AsetDesaController extends Controller
 
     public function store(Request $request)
     {
-        // Implementasi akan ditambahkan nanti
+        $request->validate([
+            'desa_id' => 'required|exists:desas,id',
+            'kategori_aset' => 'required|in:tanah,bangunan,inventaris',
+            'nama_aset' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
+            'nilai_perolehan' => 'nullable|numeric|min:0',
+            'nilai_sekarang' => 'nullable|numeric|min:0',
+            'tanggal_perolehan' => 'required|date',
+            'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
+            'lokasi' => 'required|string',
+            'bukti_kepemilikan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'keterangan' => 'nullable|string',
+        ]);
+
+        $data = $request->all();
+        $data['updated_by'] = Auth::check() ? Auth::id() : null;
+
+        // Upload bukti kepemilikan
+        if ($request->hasFile('bukti_kepemilikan')) {
+            $data['bukti_kepemilikan'] = $request->file('bukti_kepemilikan')
+                ->store('bukti-aset', 'public');
+        }
+
+        $aset = AsetDesa::create($data);
+
+        // Update desa last_updated_at
+        $desa = Desa::find($data['desa_id']);
+        if ($desa) {
+            $desa->updateLastUpdated();
+        }
+
         return redirect()->route('admin.aset-desa.index')
             ->with('success', 'Data aset desa berhasil ditambahkan.');
     }
@@ -42,21 +74,70 @@ class AsetDesaController extends Controller
 
     public function update(Request $request, AsetDesa $asetDesa)
     {
-        // Implementasi akan ditambahkan nanti
+        $request->validate([
+            'desa_id' => 'required|exists:desas,id',
+            'kategori_aset' => 'required|in:tanah,bangunan,inventaris',
+            'nama_aset' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
+            'nilai_perolehan' => 'nullable|numeric|min:0',
+            'nilai_sekarang' => 'nullable|numeric|min:0',
+            'tanggal_perolehan' => 'required|date',
+            'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
+            'lokasi' => 'required|string',
+            'bukti_kepemilikan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'keterangan' => 'nullable|string',
+            'update_reason' => 'required|string|max:255',
+        ]);
+
+        $data = $request->all();
+        $data['updated_by'] = Auth::check() ? Auth::id() : null;
+
+        // Upload bukti kepemilikan baru
+        if ($request->hasFile('bukti_kepemilikan')) {
+            // Hapus file lama
+            if ($asetDesa->bukti_kepemilikan) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($asetDesa->bukti_kepemilikan);
+            }
+            $data['bukti_kepemilikan'] = $request->file('bukti_kepemilikan')
+                ->store('bukti-aset', 'public');
+        }
+
+        $asetDesa->update($data);
+
+        // Update desa last_updated_at
+        $desa = Desa::find($data['desa_id']);
+        if ($desa) {
+            $desa->updateLastUpdated();
+        }
+
         return redirect()->route('admin.aset-desa.index')
             ->with('success', 'Data aset desa berhasil diperbarui.');
     }
 
     public function destroy(AsetDesa $asetDesa)
     {
+        $desa_id = $asetDesa->desa_id;
+        
+        // Hapus file bukti kepemilikan jika ada
+        if ($asetDesa->bukti_kepemilikan) {
+            Storage::disk('public')->delete($asetDesa->bukti_kepemilikan);
+        }
+
         $asetDesa->delete();
+        
+        // Update desa last_updated_at
+        $desa = Desa::find($desa_id);
+        if ($desa) {
+            $desa->updateLastUpdated();
+        }
+        
         return redirect()->route('admin.aset-desa.index')
             ->with('success', 'Data aset desa berhasil dihapus.');
     }
 
     public function riwayat(AsetDesa $aset)
     {
-        $riwayat = $aset->riwayat()->with('changedBy')->orderBy('created_at', 'desc')->get();
-        return view('admin.aset-desa.riwayat', compact('aset', 'riwayat'));
+        $riwayat = $aset->riwayat()->with('changedBy')->orderBy('created_at', 'desc')->paginate(10);
+        return view('admin.aset-desa.riwayat', compact('aset', 'riwayat'))->with('asetDesa', $aset);
     }
 }

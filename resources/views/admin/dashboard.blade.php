@@ -342,42 +342,47 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Status Update Chart
-    const statusCtx = document.getElementById('statusUpdateChart').getContext('2d');
-    new Chart(statusCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Update Terbaru', 'Perlu Update', 'Butuh Perhatian'],
-            datasets: [{
-                data: [{{ $statusUpdate['hijau'] }}, {{ $statusUpdate['kuning'] }}, {{ $statusUpdate['merah'] }}],
-                backgroundColor: ['#198754', '#ffc107', '#dc3545'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
+    const statusUpdateChartElement = document.getElementById('statusUpdateChart');
+    if (statusUpdateChartElement) {
+        const statusCtx = statusUpdateChartElement.getContext('2d');
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Update Terbaru', 'Perlu Update', 'Butuh Perhatian'],
+                datasets: [{
+                    data: [{{ $statusUpdate['hijau'] }}, {{ $statusUpdate['kuning'] }}, {{ $statusUpdate['merah'] }}],
+                    backgroundColor: ['#198754', '#ffc107', '#dc3545'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 
     // Gender Chart
-    const genderCtx = document.getElementById('genderChart').getContext('2d');
-    new Chart(genderCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Laki-laki', 'Perempuan'],
-            datasets: [{
-                data: [{{ $pendudukPria }}, {{ $pendudukWanita }}],
-                backgroundColor: ['#0d6efd', '#dc3545'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
+    const genderChartElement = document.getElementById('genderChart');
+    if (genderChartElement) {
+        const genderCtx = genderChartElement.getContext('2d');
+        new Chart(genderCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Laki-laki', 'Perempuan'],
+                datasets: [{
+                    data: [{{ $pendudukPria }}, {{ $pendudukWanita }}],
+                    backgroundColor: ['#0d6efd', '#dc3545'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
             maintainAspectRatio: false,
             plugins: {
                 legend: {
@@ -388,102 +393,111 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // KTP Chart
-    const ktpCtx = document.getElementById('ktpChart').getContext('2d');
-    new Chart(ktpCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Sudah KTP', 'Belum KTP'],
-            datasets: [{
-                data: [{{ $pendudukBerKTP }}, {{ $pendudukBelumKTP }}],
-                backgroundColor: ['#198754', '#dc3545'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
+    const ktpChartElement = document.getElementById('ktpChart');
+    if (ktpChartElement) {
+        const ktpCtx = ktpChartElement.getContext('2d');
+        new Chart(ktpCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Sudah KTP', 'Belum KTP'],
+                datasets: [{
+                    data: [{{ $pendudukBerKTP }}, {{ $pendudukBelumKTP }}],
+                    backgroundColor: ['#198754', '#dc3545'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 
     // Usia Chart
-    const usiaCtx = document.getElementById('usiaChart').getContext('2d');
-    new Chart(usiaCtx, {
-        type: 'bar',
-        data: {
-            labels: {!! $klasifikasiUsia->pluck('klasifikasi_usia')->toJson() !!},
-            datasets: [{
-                label: 'Jumlah Penduduk',
-                data: {!! $klasifikasiUsia->pluck('jumlah')->toJson() !!},
-                backgroundColor: [
-                    '#ff6384',
-                    '#36a2eb', 
-                    '#cc65fe',
-                    '#ffce56',
-                    '#4bc0c0'
-                ],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
+    const usiaChartElement = document.getElementById('usiaChart');
+    if (usiaChartElement) {
+        const usiaCtx = usiaChartElement.getContext('2d');
+        new Chart(usiaCtx, {
+            type: 'bar',
+            data: {
+                labels: {!! $klasifikasiUsia->pluck('klasifikasi_usia')->toJson() !!},
+                datasets: [{
+                    label: 'Jumlah Penduduk',
+                    data: {!! $klasifikasiUsia->pluck('jumlah')->toJson() !!},
+                    backgroundColor: [
+                        '#ff6384',
+                        '#36a2eb', 
+                        '#cc65fe',
+                        '#ffce56',
+                        '#4bc0c0'
+                    ],
+                    borderWidth: 0
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 
     // Perkembangan Chart
-    const perkembanganCtx = document.getElementById('perkembanganChart').getContext('2d');
-    new Chart(perkembanganCtx, {
-        type: 'line',
-        data: {
-            labels: {!! collect($grafikBulanan)->pluck('bulan')->toJson() !!},
-            datasets: [{
-                label: 'Penduduk',
-                data: {!! collect($grafikBulanan)->pluck('penduduk')->toJson() !!},
-                borderColor: '#0d6efd',
-                backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                tension: 0.1
-            }, {
-                label: 'Perangkat Desa',
-                data: {!! collect($grafikBulanan)->pluck('perangkat')->toJson() !!},
-                borderColor: '#198754',
-                backgroundColor: 'rgba(25, 135, 84, 0.1)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-                intersect: false,
+    const perkembanganChartElement = document.getElementById('perkembanganChart');
+    if (perkembanganChartElement) {
+        const perkembanganCtx = perkembanganChartElement.getContext('2d');
+        new Chart(perkembanganCtx, {
+            type: 'line',
+            data: {
+                labels: {!! collect($grafikBulanan)->pluck('bulan')->toJson() !!},
+                datasets: [{
+                    label: 'Penduduk',
+                    data: {!! collect($grafikBulanan)->pluck('penduduk')->toJson() !!},
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                    tension: 0.1
+                }, {
+                    label: 'Perangkat Desa',
+                    data: {!! collect($grafikBulanan)->pluck('perangkat')->toJson() !!},
+                    borderColor: '#198754',
+                    backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                    tension: 0.1
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 });
 </script>
 @endpush
