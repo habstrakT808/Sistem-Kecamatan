@@ -52,8 +52,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('aset-tanah-warga', AdminAsetTanahWargaController::class);
     
     // Dokumen
-    Route::resource('dokumen', AdminDokumenController::class);
-    Route::get('dokumen/{dokumen}/download', [AdminDokumenController::class, 'download'])->name('dokumen.download');
+    Route::resource('dokumen', AdminDokumenController::class)->parameters([
+        'dokumen' => 'dokuman'
+    ]);
+    Route::get('dokumen/{dokuman}/download', [AdminDokumenController::class, 'download'])->name('dokumen.download');
     
     // User Management
     Route::resource('users', AdminUserController::class);

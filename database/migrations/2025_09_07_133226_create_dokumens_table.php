@@ -13,7 +13,7 @@ return new class extends Migration
             $table->unsignedBigInteger('desa_id')->nullable();
             $table->string('nama_dokumen');
             $table->text('deskripsi')->nullable();
-            $table->enum('kategori', ['legal', 'panduan', 'template', 'laporan']);
+            $table->enum('kategori', ['surat', 'laporan', 'peraturan', 'pedoman', 'lainnya']);
             $table->string('file_path');
             $table->string('file_type');
             $table->integer('file_size'); // dalam bytes

@@ -53,7 +53,8 @@ class UserController extends Controller
     public function show(User $user)
     {
         $user->load('desa');
-        return view('admin.users.show', compact('user'));
+        $activities = $user->userActivities()->with('subject')->orderBy('created_at', 'desc')->get();
+        return view('admin.users.show', compact('user', 'activities'));
     }
 
     public function edit(User $user)
@@ -99,34 +100,55 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')
             ->with('success', 'User berhasil dihapus.');
     }
-
+    
     public function toggleStatus(User $user)
     {
-        $currentUser = Auth::user();
-        if ($user->id === $currentUser->id) {
+        if ($user->id === Auth::id()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Anda tidak dapat mengubah status akun sendiri.'
             ]);
         }
-
-        $user->update(['is_active' => !$user->is_active]);
-
+        
+        $user->update([
+            'is_active' => !$user->is_active
+        ]);
+        
+        $user->recordActivity(
+            'update', 
+            'mengubah status user menjadi ' . ($user->is_active ? 'aktif' : 'nonaktif'),
+            ['status' => $user->is_active]
+        );
+        
         return response()->json([
             'success' => true,
-            'message' => 'Status user berhasil diubah.',
-            'is_active' => $user->is_active
+            'message' => 'Status user berhasil diubah menjadi ' . ($user->is_active ? 'aktif' : 'nonaktif') . '.'
         ]);
     }
-
+    
     public function resetPassword(User $user)
     {
+        if ($user->id === Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak dapat mereset password akun sendiri.'
+            ]);
+        }
+        
         $newPassword = 'password123';
-        $user->update(['password' => Hash::make($newPassword)]);
-
+        $user->update([
+            'password' => Hash::make($newPassword)
+        ]);
+        
+        $user->recordActivity(
+            'update', 
+            'mereset password user',
+            ['reset_password' => true]
+        );
+        
         return response()->json([
             'success' => true,
-            'message' => "Password berhasil direset menjadi: {$newPassword}"
+            'message' => 'Password user berhasil direset menjadi: ' . $newPassword
         ]);
     }
-}
+    }
