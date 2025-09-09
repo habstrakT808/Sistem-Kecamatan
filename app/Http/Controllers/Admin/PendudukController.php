@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PendudukExport;
+use App\Exports\PendudukTemplateExport;
 use App\Imports\PendudukImport;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -231,7 +232,10 @@ class PendudukController extends Controller
                 ->with('error', 'Gagal import data: ' . $e->getMessage());
         }
     }
-
+    
+    /**
+     * Download template Excel untuk import data penduduk
+     */
     public function downloadTemplate()
 {
     $filename = 'template-import-penduduk.xlsx';

@@ -27,6 +27,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/monitoring', [AdminDashboardController::class, 'monitoring'])->name('monitoring');
     Route::get('/statistik', [AdminDashboardController::class, 'statistik'])->name('statistik');
+    Route::get('/statistik/export/excel', [AdminDashboardController::class, 'exportExcel'])->name('statistik.export.excel');
+    Route::get('/statistik/export/pdf', [AdminDashboardController::class, 'exportPdf'])->name('statistik.export.pdf');
     // Tambahkan di dalam group admin routes
     Route::get('penduduk/download-template', [AdminPendudukController::class, 'downloadTemplate'])->name('penduduk.download-template');
     
@@ -35,6 +37,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('desa/{desa}/update-coordinates', [AdminDesaController::class, 'updateCoordinates'])->name('desa.update-coordinates');
     
     // Perangkat Desa
+    Route::get('perangkat-desa/export/excel', [AdminPerangkatDesaController::class, 'exportExcel'])->name('perangkat-desa.export.excel');
     Route::resource('perangkat-desa', AdminPerangkatDesaController::class);
     Route::get('perangkat-desa/{perangkat}/riwayat', [AdminPerangkatDesaController::class, 'riwayat'])->name('perangkat-desa.riwayat');
     
@@ -45,10 +48,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('penduduk/import', [AdminPendudukController::class, 'import'])->name('penduduk.import');
     
     // Aset Desa
+    Route::get('aset-desa/export/pdf', [AdminAsetDesaController::class, 'exportPdf'])->name('aset-desa.export.pdf');
     Route::resource('aset-desa', AdminAsetDesaController::class);
     Route::get('aset-desa/{aset}/riwayat', [AdminAsetDesaController::class, 'riwayat'])->name('aset-desa.riwayat');
     
     // Aset Tanah Warga
+    Route::get('aset-tanah-warga/export/excel', [AdminAsetTanahWargaController::class, 'exportExcel'])->name('aset-tanah-warga.export.excel');
     Route::resource('aset-tanah-warga', AdminAsetTanahWargaController::class);
     
     // Dokumen

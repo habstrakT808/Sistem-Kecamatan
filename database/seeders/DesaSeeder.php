@@ -72,19 +72,31 @@ class DesaSeeder extends Seeder
         ];
 
         foreach ($desas as $index => $desaData) {
-            $desa = Desa::create($desaData);
-
-            // Buat admin desa untuk setiap desa
-            User::create([
-                'name' => 'Admin Desa ' . $desa->nama_desa,
-                'email' => 'admin.desa' . ($index + 1) . '@desa.com',
-                'password' => Hash::make('password123'),
-                'role' => 'admin_desa',
-                'desa_id' => $desa->id,
-                'phone' => '0812345678' . ($index + 1),
-                'address' => $desa->alamat,
-                'is_active' => true,
-            ]);
+            // Cek apakah desa sudah ada berdasarkan kode_desa
+            $existingDesa = Desa::where('kode_desa', $desaData['kode_desa'])->first();
+            
+            if (!$existingDesa) {
+                $desa = Desa::create($desaData);
+                
+                // Cek apakah admin desa sudah ada
+                $adminEmail = 'admin.desa' . ($index + 1) . '@desa.com';
+                if (!User::where('email', $adminEmail)->exists()) {
+                    // Buat admin desa untuk setiap desa
+                    User::create([
+                        'name' => 'Admin Desa ' . $desa->nama_desa,
+                        'email' => $adminEmail,
+                        'password' => Hash::make('password123'),
+                        'role' => 'admin_desa',
+                        'desa_id' => $desa->id,
+                        'phone' => '0812345678' . ($index + 1),
+                        'address' => $desa->alamat,
+                        'is_active' => true,
+                    ]);
+                }
+            } else {
+                // Gunakan desa yang sudah ada
+                $desa = $existingDesa;
+            }
         }
     }
 }

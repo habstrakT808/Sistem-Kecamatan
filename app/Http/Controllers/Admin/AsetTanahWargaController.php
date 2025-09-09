@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AsetTanahWarga;
 use App\Models\Desa;
+use App\Exports\AsetTanahWargaExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -146,5 +148,22 @@ class AsetTanahWargaController extends Controller
         
         return redirect()->route('admin.aset-tanah-warga.index')
             ->with('success', 'Data aset tanah warga berhasil dihapus.');
+    }
+    
+    /**
+     * Export data aset tanah warga ke Excel
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportExcel(Request $request)
+    {
+        $desaId = $request->desa_id;
+        $jenisTanah = $request->jenis_tanah;
+        $search = $request->search;
+        
+        $fileName = 'data_aset_tanah_warga_' . date('Y-m-d') . '.xlsx';
+        
+        return Excel::download(new AsetTanahWargaExport($desaId, $jenisTanah, $search), $fileName);
     }
 }

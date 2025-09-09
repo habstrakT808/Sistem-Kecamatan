@@ -8,6 +8,8 @@ use App\Models\Desa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PerangkatDesaExport;
 
 class PerangkatDesaController extends Controller
 {
@@ -178,5 +180,22 @@ class PerangkatDesaController extends Controller
     {
         $riwayat = $perangkat->riwayat()->with('changedBy')->orderBy('created_at', 'desc')->paginate(10);
         return view('admin.perangkat-desa.riwayat', compact('perangkat', 'riwayat'));
+    }
+    
+    /**
+     * Export data perangkat desa ke Excel
+     */
+    public function exportExcel(Request $request)
+    {
+        $filename = 'data-perangkat-desa-' . date('YmdHis') . '.xlsx';
+        
+        return Excel::download(
+            new PerangkatDesaExport(
+                $request->desa_id,
+                $request->jabatan,
+                $request->status
+            ),
+            $filename
+        );
     }
 }

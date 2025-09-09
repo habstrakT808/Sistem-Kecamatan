@@ -8,6 +8,7 @@ use App\Models\Desa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use App\Exports\AsetDesaPdfExport;
 
 class AsetDesaController extends Controller
 {
@@ -134,10 +135,25 @@ class AsetDesaController extends Controller
         return redirect()->route('admin.aset-desa.index')
             ->with('success', 'Data aset desa berhasil dihapus.');
     }
-
+    
     public function riwayat(AsetDesa $aset)
     {
         $riwayat = $aset->riwayat()->with('changedBy')->orderBy('created_at', 'desc')->paginate(10);
-        return view('admin.aset-desa.riwayat', compact('aset', 'riwayat'))->with('asetDesa', $aset);
+        return view('admin.aset-desa.riwayat', compact('aset', 'riwayat'));
+    }
+    
+    /**
+     * Export data aset desa ke PDF
+     */
+    public function exportPdf(Request $request)
+    {
+        $exporter = new AsetDesaPdfExport(
+            $request->desa_id,
+            $request->jenis_aset,
+            $request->kondisi,
+            $request->status
+        );
+        
+        return $exporter->download();
     }
 }

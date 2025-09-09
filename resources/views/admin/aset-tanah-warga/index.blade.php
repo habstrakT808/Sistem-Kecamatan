@@ -8,6 +8,17 @@
         <i class="fas fa-plus me-1"></i>
         Tambah Aset Tanah Warga
     </a>
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="fas fa-download me-1"></i>
+            Export
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ route('admin.aset-tanah-warga.export.excel', request()->query()) }}">
+                <i class="fas fa-file-excel me-2"></i>Excel
+            </a></li>
+        </ul>
+    </div>
 </div>
 @endsection
 
