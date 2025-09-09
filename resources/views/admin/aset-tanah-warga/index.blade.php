@@ -195,8 +195,10 @@
                 </table>
             </div>
             
-            <div class="p-3">
-                {{ $asetTanahWargas->withQueryString()->links() }}
+            <div class="d-flex justify-content-center py-3 border-top bg-white">
+                <nav aria-label="Navigasi halaman">
+                    {{ $asetTanahWargas->withQueryString()->links('vendor.pagination.custom-bootstrap-5') }}
+                </nav>
             </div>
         @else
             <div class="p-4 text-center">

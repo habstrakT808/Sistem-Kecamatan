@@ -19,6 +19,9 @@
     <!-- Leaflet CSS untuk peta -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
+    <!-- Custom CSS Pagination -->
+    <link rel="stylesheet" href="{{ asset('css/custom-pagination.css') }}">
+    
     <!-- Custom CSS menggunakan Bootstrap utilities -->
     <style>
         .bg-gradient-primary {

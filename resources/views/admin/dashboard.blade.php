@@ -103,7 +103,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="h4 mb-0 fw-bold">Rp {{ number_format(($totalNilaiAsetDesa + $totalNilaiAsetWarga)/1000000, 1) }}M</div>
+                        <div class="h4 mb-0 fw-bold">Rp {{ number_format($totalNilaiAsetDesa + $totalNilaiAsetWarga, 0, ',', '.') }}</div>
                         <div class="small">Total Nilai Aset</div>
                     </div>
                     <div class="opacity-75">
@@ -523,7 +523,27 @@ document.addEventListener('DOMContentLoaded', function() {
                         beginAtZero: true,
                         ticks: {
                             callback: function(value) {
-                                return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                                return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45,
+                            autoSkip: false,
+                            font: {
+                                size: 10
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45,
+                            autoSkip: false,
+                            font: {
+                                size: 10
                             }
                         }
                     }
@@ -532,9 +552,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return 'Nilai Aset: Rp ' + context.raw.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                                return 'Nilai Aset: Rp ' + new Intl.NumberFormat('id-ID').format(context.raw);
                             }
                         }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top'
                     }
                 }
             }
@@ -565,7 +589,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         beginAtZero: true,
                         ticks: {
                             callback: function(value) {
-                                return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                                return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
                             }
                         }
                     }
@@ -574,9 +598,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return 'Nilai Aset: Rp ' + context.raw.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                                return 'Nilai Aset: Rp ' + new Intl.NumberFormat('id-ID').format(context.raw);
                             }
                         }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top'
                     }
                 }
             }
@@ -652,41 +680,66 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Perkembangan Chart
     const perkembanganChartElement = document.getElementById('perkembanganChart');
-    if (perkembanganChartElement) {
-        const perkembanganCtx = perkembanganChartElement.getContext('2d');
-        new Chart(perkembanganCtx, {
-            type: 'line',
-            data: {
-                labels: {!! collect($grafikBulanan)->pluck('bulan')->toJson() !!},
-                datasets: [{
-                    label: 'Penduduk',
-                    data: {!! collect($grafikBulanan)->pluck('penduduk')->toJson() !!},
-                    borderColor: '#0d6efd',
-                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                    tension: 0.1
-                }, {
-                    label: 'Perangkat Desa',
-                    data: {!! collect($grafikBulanan)->pluck('perangkat')->toJson() !!},
-                    borderColor: '#198754',
-                    backgroundColor: 'rgba(25, 135, 84, 0.1)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    intersect: false,
+    let perkembanganChart;
+    
+    function initPerkembanganChart() {
+        if (perkembanganChartElement) {
+            const perkembanganCtx = perkembanganChartElement.getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (perkembanganChart) {
+                perkembanganChart.destroy();
+            }
+            
+            perkembanganChart = new Chart(perkembanganCtx, {
+                type: 'line',
+                data: {
+                    labels: {!! collect($grafikBulanan)->pluck('bulan')->toJson() !!},
+                    datasets: [{
+                        label: 'Penduduk',
+                        data: {!! collect($grafikBulanan)->pluck('penduduk')->toJson() !!},
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        tension: 0.1
+                    }, {
+                        label: 'Perangkat Desa',
+                        data: {!! collect($grafikBulanan)->pluck('perangkat')->toJson() !!},
+                        borderColor: '#198754',
+                        backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                        tension: 0.1
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
                         }
                     }
                 }
-            }
+            });
+        }
+    }
+    
+    // Initialize chart
+    initPerkembanganChart();
+    
+    // Handle year filter change
+    const tahunSelect = document.getElementById('tahunSelect');
+    if (tahunSelect) {
+        tahunSelect.addEventListener('change', function() {
+            const selectedYear = this.value;
+            
+            // You would typically make an AJAX request here to get new data
+            // For now, we'll just reload the page with the selected year
+            window.location.href = `{{ route('admin.dashboard') }}?tahun=${selectedYear}`;
         });
     }
 });

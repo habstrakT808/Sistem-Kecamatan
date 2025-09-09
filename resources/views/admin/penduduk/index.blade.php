@@ -264,8 +264,10 @@
         </div>
     </div>
     @if($penduduks->hasPages())
-    <div class="card-footer">
-        {{ $penduduks->links() }}
+    <div class="d-flex justify-content-center py-3 border-top bg-white">
+        <nav aria-label="Navigasi halaman">
+            {{ $penduduks->links('vendor.pagination.custom-bootstrap-5') }}
+        </nav>
     </div>
     @endif
 </div>

@@ -241,20 +241,23 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Data desa dari server
-    const desaData = @json($desas->map(function($desa) {
-        return [
-            'id' => $desa->id,
-            'nama' => $desa->nama_desa,
-            'kepala' => $desa->kepala_desa,
-            'lat' => $desa->latitude,
-            'lng' => $desa->longitude,
-            'penduduk' => $desa->total_penduduk,
-            'perangkat' => $desa->total_perangkat,
-            'status' => $desa->status_update,
-            'last_update' => $desa->last_updated_at ? $desa->last_updated_at->diffForHumans() : 'Belum pernah update',
-            'alamat' => $desa->alamat
-        ];
-    }));
+    @php
+        $desaDataArray = $desas->map(function($desa) {
+            return [
+                'id' => $desa->id,
+                'nama' => $desa->nama_desa,
+                'kepala' => $desa->kepala_desa,
+                'lat' => $desa->latitude,
+                'lng' => $desa->longitude,
+                'penduduk' => $desa->total_penduduk,
+                'perangkat' => $desa->total_perangkat,
+                'status' => $desa->status_update,
+                'last_update' => $desa->last_updated_at ? $desa->last_updated_at->diffForHumans() : 'Belum pernah update',
+                'alamat' => $desa->alamat
+            ];
+        })->toArray();
+    @endphp
+    const desaData = @json($desaDataArray);
 
     // Inisialisasi peta
     const map = L.map('map').setView([-2.9674, 104.7294], 12);

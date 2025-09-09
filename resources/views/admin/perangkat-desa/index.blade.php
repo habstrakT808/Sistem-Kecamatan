@@ -119,7 +119,7 @@
 </div>
 
 <!-- Tabel Data -->
-<div class="card shadow-sm">
+<div class="card shadow-sm mb-2">
     <div class="card-header bg-white">
         <h5 class="card-title mb-0">
             <i class="fas fa-list me-2"></i>
@@ -242,8 +242,10 @@
         </div>
     </div>
     @if($perangkatDesas->hasPages())
-    <div class="card-footer">
-        {{ $perangkatDesas->links() }}
+    <div class="d-flex justify-content-center py-3 border-top bg-white">
+        <nav aria-label="Navigasi halaman">
+            {{ $perangkatDesas->links('vendor.pagination.custom-bootstrap-5') }}
+        </nav>
     </div>
     @endif
 </div>

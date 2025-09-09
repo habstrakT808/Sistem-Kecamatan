@@ -44,8 +44,11 @@ class DashboardController extends Controller
         return $export->download();
     }
     
-    public function index()
+    public function index(Request $request)
     {
+        // Ambil parameter tahun dari request, default ke tahun sekarang
+        $tahun = $request->tahun ?? date('Y');
+        
         // Statistik Umum
         $totalDesa = Desa::count();
         $totalPenduduk = Penduduk::count();
@@ -90,53 +93,49 @@ class DashboardController extends Controller
         
         // Hitung total nilai aset tanah warga dengan mengalikan luas_tanah dan nilai_per_meter
         $totalNilaiAsetWarga = AsetTanahWarga::selectRaw('SUM(luas_tanah * nilai_per_meter) as total_nilai')->value('total_nilai') ?? 0;
+        
+        // Data untuk grafik nilai aset per desa
+        $desas = Desa::all();
+        $desaList = $desas->pluck('nama_desa')->toArray();
+        
+        // Nilai aset desa per desa
+        $nilaiAsetDesa = [];
+        foreach ($desas as $desa) {
+            $nilaiAsetDesa[] = AsetDesa::where('desa_id', $desa->id)
+                ->where('is_current', true)
+                ->sum('nilai_sekarang');
+        }
+        
+        // Nilai aset warga per desa
+        $nilaiAsetWarga = [];
+        foreach ($desas as $desa) {
+            $nilaiAsetWarga[] = AsetTanahWarga::where('desa_id', $desa->id)
+                ->selectRaw('SUM(luas_tanah * nilai_per_meter) as total_nilai')
+                ->value('total_nilai') ?? 0;
+        }
 
-        // Data untuk grafik bulanan (6 bulan terakhir)
+        // Data untuk grafik bulanan berdasarkan tahun yang dipilih
         $grafikBulanan = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $bulan = Carbon::now()->subMonths($i);
+        for ($bulan = 1; $bulan <= 12; $bulan++) {
+            $tanggal = Carbon::createFromDate($tahun, $bulan, 1);
             $grafikBulanan[] = [
-                'bulan' => $bulan->format('M Y'),
-                'penduduk' => Penduduk::whereYear('created_at', $bulan->year)
-                    ->whereMonth('created_at', $bulan->month)
+                'bulan' => $tanggal->format('M Y'),
+                'penduduk' => Penduduk::whereYear('created_at', $tanggal->year)
+                    ->whereMonth('created_at', $tanggal->month)
                     ->count(),
-                'perangkat' => PerangkatDesa::whereYear('created_at', $bulan->year)
-                    ->whereMonth('created_at', $bulan->month)
+                'perangkat' => PerangkatDesa::whereYear('created_at', $tanggal->year)
+                    ->whereMonth('created_at', $tanggal->month)
                     ->count(),
             ];
         }
         
-        // Data untuk chart statistik nilai aset per desa
-        $desaList = Desa::orderBy('nama_desa')->pluck('nama_desa')->toArray();
-        $nilaiAsetDesa = [];
-        $nilaiAsetWarga = [];
-        
-        $desas = Desa::with(['asetDesas' => function($query) {
-            $query->where('is_current', true);
-        }, 'asetTanahWargas'])->get();
-        
-        foreach ($desas as $desa) {
-            $nilaiAsetDesa[] = $desa->asetDesas->sum('nilai_sekarang');
-            $nilaiAsetWarga[] = $desa->asetTanahWargas->sum(function($aset) {
-                return $aset->luas_tanah * $aset->nilai_per_meter;
-            });
+        // Daftar tahun untuk filter grafik
+        $tahunList = [];
+        $tahunAwal = 2020; // Tahun awal data
+        $tahunSekarang = date('Y');
+        for ($tahun = $tahunSekarang; $tahun >= $tahunAwal; $tahun--) {
+            $tahunList[] = $tahun;
         }
-        
-        // Data untuk status update desa
-        $updateTerbaru = $statusUpdate['hijau'] ?? 0;
-        $perluUpdate = $statusUpdate['kuning'] ?? 0;
-        $butuhPerhatian = $statusUpdate['merah'] ?? 0;
-        
-        // Data untuk statistik KTP
-        $sudahKtp = $pendudukBerKTP;
-        $belumKtp = $pendudukBelumKTP;
-        
-        // Data untuk statistik gender
-        $lakiLaki = $pendudukPria;
-        $perempuan = $pendudukWanita;
-        
-        // Daftar tahun untuk filter grafik perkembangan
-        $tahunList = range(date('Y') - 2, date('Y'));
 
         return view('admin.dashboard', compact(
             'totalDesa',
@@ -154,17 +153,10 @@ class DashboardController extends Controller
             'totalNilaiAsetDesa',
             'totalNilaiAsetWarga',
             'grafikBulanan',
+            'tahunList',
             'desaList',
             'nilaiAsetDesa',
-            'nilaiAsetWarga',
-            'updateTerbaru',
-            'perluUpdate',
-            'butuhPerhatian',
-            'sudahKtp',
-            'belumKtp',
-            'lakiLaki',
-            'perempuan',
-            'tahunList'
+            'nilaiAsetWarga'
         ));
     }
 

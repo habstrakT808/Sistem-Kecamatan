@@ -66,7 +66,7 @@
                     <i class="fas fa-home text-primary me-2"></i>
                     Total Desa
                 </h5>
-                <h2 class="text-primary mb-0">{{ $desas->count() }}</h2>
+                <h2 class="text-primary mb-0">{{ $desas->total() }}</h2>
             </div>
         </div>
     </div>
@@ -99,7 +99,7 @@
                 <tbody>
                     @forelse($desas as $index => $desa)
                     <tr>
-                        <td>{{ $index + 1 }}</td>
+                        <td>{{ ($desas->currentPage() - 1) * $desas->perPage() + $index + 1 }}</td>
                         <td>
                             <div class="d-flex align-items-center">
                                 <div>
@@ -197,6 +197,11 @@
                 </tbody>
             </table>
         </div>
+    </div>
+    <div class="d-flex justify-content-center py-3 border-top bg-white">
+        <nav aria-label="Navigasi halaman">
+            {{ $desas->links('vendor.pagination.custom-bootstrap-5') }}
+        </nav>
     </div>
 </div>
 @endsection

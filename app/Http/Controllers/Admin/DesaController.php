@@ -9,11 +9,30 @@ use Illuminate\Support\Facades\Storage;
 
 class DesaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $desas = Desa::withCount(['penduduks', 'perangkatDesas'])
-            ->orderBy('nama_desa')
-            ->get();
+        $query = Desa::withCount(['penduduks', 'perangkatDesas']);
+        
+        // Filter berdasarkan pencarian
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_desa', 'like', "%{$search}%")
+                  ->orWhere('kepala_desa', 'like', "%{$search}%");
+            });
+        }
+        
+        // Filter berdasarkan status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        // Filter berdasarkan status update
+        if ($request->filled('update_status')) {
+            $query->where('status_update', $request->update_status);
+        }
+        
+        $desas = $query->orderBy('nama_desa')->paginate(20);
 
         return view('admin.desa.index', compact('desas'));
     }
