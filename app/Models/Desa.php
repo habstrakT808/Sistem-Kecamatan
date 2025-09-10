@@ -67,6 +67,11 @@ class Desa extends Model
     {
         return $this->hasMany(Dokumen::class);
     }
+    
+    public function activities()
+    {
+        return $this->hasMany(Activity::class, 'desa_id');
+    }
 
     // Helper methods
     public function getTotalPendudukAttribute()

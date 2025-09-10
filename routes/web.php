@@ -70,10 +70,37 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
 // Admin Desa Routes
 Route::prefix('admin-desa')->name('admin-desa.')->middleware(['auth', 'admin_desa'])->group(function () {
+    // Dashboard
     Route::get('/dashboard', [AdminDesaDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/export/excel', [AdminDesaDashboardController::class, 'exportExcel'])->name('dashboard.export.excel');
+    Route::get('/dashboard/export/pdf', [AdminDesaDashboardController::class, 'exportPdf'])->name('dashboard.export.pdf');
     
-    // Routes untuk Admin Desa akan ditambahkan nanti
-});
+    // Data Penduduk
+    Route::resource('penduduk', '\App\Http\Controllers\AdminDesa\PendudukController');
+    Route::get('penduduk/export/excel', '\App\Http\Controllers\AdminDesa\PendudukController@exportExcel')->name('penduduk.export.excel');
+    Route::get('penduduk/export/pdf', '\App\Http\Controllers\AdminDesa\PendudukController@exportPdf')->name('penduduk.export.pdf');
+    Route::post('penduduk/import', '\App\Http\Controllers\AdminDesa\PendudukController@import')->name('penduduk.import');
+    
+    // Perangkat Desa
+    Route::resource('perangkat-desa', '\App\Http\Controllers\AdminDesa\PerangkatDesaController');
+    Route::get('perangkat-desa/export/excel', '\App\Http\Controllers\AdminDesa\PerangkatDesaController@exportExcel')->name('perangkat-desa.export.excel');
+    Route::get('perangkat-desa/{perangkat}/riwayat', '\App\Http\Controllers\AdminDesa\PerangkatDesaController@riwayat')->name('perangkat-desa.riwayat');
+    
+    // Aset Desa
+    Route::resource('aset-desa', '\App\Http\Controllers\AdminDesa\AsetDesaController');
+    Route::get('aset-desa/export/pdf', '\App\Http\Controllers\AdminDesa\AsetDesaController@exportPdf')->name('aset-desa.export.pdf');
+    Route::get('aset-desa/{aset}/riwayat', '\App\Http\Controllers\AdminDesa\AsetDesaController@riwayat')->name('aset-desa.riwayat');
+    
+    // Aset Tanah Warga
+    Route::resource('aset-tanah-warga', '\App\Http\Controllers\AdminDesa\AsetTanahWargaController');
+    Route::get('aset-tanah-warga/export/excel', '\App\Http\Controllers\AdminDesa\AsetTanahWargaController@exportExcel')->name('aset-tanah-warga.export.excel');
+    
+    // Dokumen
+    Route::resource('dokumen', '\App\Http\Controllers\AdminDesa\DokumenController')->parameters([
+        'dokumen' => 'dokuman'
+    ]);
+    Route::get('dokumen/{dokuman}/download', '\App\Http\Controllers\AdminDesa\DokumenController@download')->name('dokumen.download');
+}); 
 
 // Redirect after login
 Route::get('/dashboard', function () {
