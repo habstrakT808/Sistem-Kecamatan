@@ -91,7 +91,9 @@ Route::prefix('admin-desa')->name('admin-desa.')->middleware(['auth', 'admin_des
     // Data Penduduk
     Route::resource('penduduk', '\App\Http\Controllers\AdminDesa\PendudukController');
     Route::get('penduduk/export/excel', '\App\Http\Controllers\AdminDesa\PendudukController@exportExcel')->name('penduduk.export.excel');
+    Route::get('penduduk/export-excel', '\App\Http\Controllers\AdminDesa\PendudukController@exportExcel')->name('penduduk.export-excel');
     Route::get('penduduk/export/pdf', '\App\Http\Controllers\AdminDesa\PendudukController@exportPdf')->name('penduduk.export.pdf');
+    Route::get('penduduk/template', '\App\Http\Controllers\AdminDesa\PendudukController@downloadTemplate')->name('penduduk.template');
     Route::post('penduduk/import', '\App\Http\Controllers\AdminDesa\PendudukController@import')->name('penduduk.import');
     
     // Perangkat Desa
