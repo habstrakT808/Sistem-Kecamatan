@@ -68,6 +68,16 @@ class AsetDesa extends Model
     public function createHistory($actionType, $changedBy, $reason = null)
     {
         if (!$this->exists) return;
+        
+        // Standarisasi action_type untuk memastikan konsistensi dengan enum di database
+        $standardizedActionType = $actionType;
+        if ($actionType === 'update') {
+            $standardizedActionType = 'updated';
+        } else if ($actionType === 'create') {
+            $standardizedActionType = 'created';
+        } else if ($actionType === 'delete') {
+            $standardizedActionType = 'deleted';
+        }
 
         $this->riwayat()->create([
             'desa_id' => $this->desa_id,
@@ -81,7 +91,7 @@ class AsetDesa extends Model
             'lokasi' => $this->lokasi,
             'bukti_kepemilikan' => $this->bukti_kepemilikan,
             'keterangan' => $this->keterangan,
-            'action_type' => $actionType,
+            'action_type' => $standardizedActionType,
             'changed_by' => $changedBy,
             'change_reason' => $reason,
         ]);
