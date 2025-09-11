@@ -75,6 +75,12 @@ Route::prefix('admin-desa')->name('admin-desa.')->middleware(['auth', 'admin_des
     Route::get('/dashboard/export/excel', [AdminDesaDashboardController::class, 'exportExcel'])->name('dashboard.export.excel');
     Route::get('/dashboard/export/pdf', [AdminDesaDashboardController::class, 'exportPdf'])->name('dashboard.export.pdf');
     
+    // Data Desa (Terbatas)
+    Route::get('/desa', '\App\Http\Controllers\AdminDesa\DesaController@index')->name('desa.index');
+    Route::get('/desa/edit', '\App\Http\Controllers\AdminDesa\DesaController@edit')->name('desa.edit');
+    Route::put('/desa', '\App\Http\Controllers\AdminDesa\DesaController@update')->name('desa.update');
+    Route::get('/desa/show', '\App\Http\Controllers\AdminDesa\DesaController@show')->name('desa.show');
+    
     // Data Penduduk
     Route::resource('penduduk', '\App\Http\Controllers\AdminDesa\PendudukController');
     Route::get('penduduk/export/excel', '\App\Http\Controllers\AdminDesa\PendudukController@exportExcel')->name('penduduk.export.excel');

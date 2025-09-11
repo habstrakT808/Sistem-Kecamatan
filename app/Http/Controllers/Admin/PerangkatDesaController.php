@@ -136,26 +136,42 @@ class PerangkatDesaController extends Controller
             'update_reason' => 'required|string|max:255',
         ]);
 
-        $data = $request->all();
-        $data['updated_by'] = Auth::id();
+        try {
+            // Mulai transaksi database
+            \DB::beginTransaction();
+            
+            $data = $request->except('_token', '_method');
+            $data['updated_by'] = Auth::id();
 
-        // Upload SK baru
-        if ($request->hasFile('sk_pengangkatan')) {
-            // Hapus file lama
-            if ($perangkatDesa->sk_pengangkatan) {
-                Storage::disk('public')->delete($perangkatDesa->sk_pengangkatan);
+            // Upload SK baru
+            if ($request->hasFile('sk_pengangkatan')) {
+                // Hapus file lama
+                if ($perangkatDesa->sk_pengangkatan) {
+                    Storage::disk('public')->delete($perangkatDesa->sk_pengangkatan);
+                }
+                $data['sk_pengangkatan'] = $request->file('sk_pengangkatan')
+                    ->store('sk-perangkat', 'public');
             }
-            $data['sk_pengangkatan'] = $request->file('sk_pengangkatan')
-                ->store('sk-perangkat', 'public');
+
+            // Update data perangkat desa
+            $perangkatDesa->update($data);
+
+            // Update desa last_updated_at
+            $perangkatDesa->desa->updateLastUpdated();
+            
+            // Commit transaksi jika semua operasi berhasil
+            \DB::commit();
+
+            return redirect()->route('admin.perangkat-desa.index')
+                ->with('success', 'Data perangkat desa berhasil diperbarui.');
+        } catch (\Exception $e) {
+            // Rollback transaksi jika terjadi error
+            \DB::rollback();
+            
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage());
         }
-
-        $perangkatDesa->update($data);
-
-        // Update desa last_updated_at
-        $perangkatDesa->desa->updateLastUpdated();
-
-        return redirect()->route('admin.perangkat-desa.index')
-            ->with('success', 'Data perangkat desa berhasil diperbarui.');
     }
 
     public function destroy(PerangkatDesa $perangkatDesa)

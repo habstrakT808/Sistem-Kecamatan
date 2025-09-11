@@ -29,6 +29,7 @@ class RiwayatPerangkatDesa extends Model
         'action_type',
         'changed_by',
         'change_reason',
+        'perubahan',
     ];
 
     protected function casts(): array
@@ -51,7 +52,7 @@ class RiwayatPerangkatDesa extends Model
         return $this->belongsTo(Desa::class);
     }
 
-    public function changedBy()
+    public function user()
     {
         return $this->belongsTo(User::class, 'changed_by');
     }

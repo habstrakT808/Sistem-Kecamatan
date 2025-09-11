@@ -46,6 +46,11 @@ class User extends Authenticatable
         return $this->hasMany(Dokumen::class, 'uploaded_by');
     }
 
+    public function activities()
+    {
+        return $this->hasMany(Activity::class);
+    }
+
     // Helper methods
     public function isAdminKecamatan()
     {

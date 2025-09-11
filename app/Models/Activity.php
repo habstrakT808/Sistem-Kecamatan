@@ -8,6 +8,7 @@ class Activity extends Model
 {
     protected $fillable = [
         'user_id',
+        'desa_id',
         'log_name',
         'description',
         'subject_type',
@@ -24,5 +25,10 @@ class Activity extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function desa()
+    {
+        return $this->belongsTo(Desa::class);
     }
 }

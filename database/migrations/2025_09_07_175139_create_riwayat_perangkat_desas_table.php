@@ -29,6 +29,7 @@ return new class extends Migration
             $table->enum('action_type', ['created', 'updated', 'deleted']);
             $table->unsignedBigInteger('changed_by');
             $table->text('change_reason')->nullable();
+            $table->json('perubahan')->nullable();
             $table->timestamps();
             
             $table->foreign('perangkat_desa_id')->references('id')->on('perangkat_desas')->onDelete('cascade');

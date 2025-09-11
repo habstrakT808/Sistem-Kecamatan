@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\LogsActivity;
 
 class PerangkatDesa extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'desa_id',
@@ -73,6 +74,18 @@ class PerangkatDesa extends Model
     {
         if (!$this->exists) return;
 
+        $changes = [];
+        $dirty = $this->getDirty();
+        
+        foreach ($dirty as $field => $newValue) {
+            if ($field !== 'updated_at' && $field !== 'update_reason') {
+                $changes[$field] = [
+                    'old' => $this->getOriginal($field),
+                    'new' => $newValue
+                ];
+            }
+        }
+
         $this->riwayat()->create([
             'desa_id' => $this->desa_id,
             'nama_lengkap' => $this->nama_lengkap,
@@ -92,12 +105,14 @@ class PerangkatDesa extends Model
             'action_type' => $actionType,
             'changed_by' => $changedBy,
             'change_reason' => $reason,
+            'perubahan' => json_encode($changes),
         ]);
     }
 
     protected static function boot()
     {
         parent::boot();
+        static::bootLogsActivity();
 
         static::created(function ($perangkat) {
             if (Auth::check()) {

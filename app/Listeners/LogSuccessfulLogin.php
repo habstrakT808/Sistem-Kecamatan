@@ -5,7 +5,7 @@ namespace App\Listeners;
 use App\Models\User;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Request as RequestFacade;
 use App\Models\Activity;
 
 class LogSuccessfulLogin
@@ -23,13 +23,14 @@ class LogSuccessfulLogin
             // Buat activity record secara manual tanpa menggunakan trait method
             Activity::create([
                 'user_id' => $event->user->id,
+                'desa_id' => $event->user->desa_id,
                 'log_name' => 'login',
                 'description' => 'login ke sistem',
                 'subject_type' => get_class($event->user),
                 'subject_id' => $event->user->id,
                 'properties' => [],
-                'ip_address' => Request::ip(),
-                'user_agent' => Request::userAgent(),
+                'ip_address' => RequestFacade::ip(),
+                'user_agent' => RequestFacade::userAgent(),
             ]);
         }
     }

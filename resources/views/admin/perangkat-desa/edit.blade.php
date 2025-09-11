@@ -34,6 +34,12 @@
                     @csrf
                     @method('PUT')
                     
+                    @if(session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                    @endif
+                    
                     <!-- Alasan Update -->
                     <div class="alert alert-info">
                         <h6><i class="fas fa-info-circle me-2"></i>Alasan Perubahan</h6>
