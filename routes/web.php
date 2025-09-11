@@ -118,6 +118,16 @@ Route::prefix('admin-desa')->name('admin-desa.')->middleware(['auth', 'admin_des
         'dokumen' => 'dokuman'
     ]);
     Route::get('dokumen/{dokuman}/download', '\App\Http\Controllers\AdminDesa\DokumenController@download')->name('dokumen.download');
+    
+    // FAQ dan Panduan Penggunaan
+    Route::get('/faq', [App\Http\Controllers\AdminDesa\FaqController::class, 'index'])->name('faq.index');
+    Route::get('/panduan-penggunaan', [App\Http\Controllers\AdminDesa\FaqController::class, 'panduan'])->name('faq.panduan');
+    
+    // Profil Admin Desa
+    Route::get('/profile', [App\Http\Controllers\AdminDesa\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [App\Http\Controllers\AdminDesa\ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/reset-password', [App\Http\Controllers\AdminDesa\ProfileController::class, 'showResetPasswordForm'])->name('profile.reset-password');
+    Route::put('/profile/reset-password', [App\Http\Controllers\AdminDesa\ProfileController::class, 'resetPassword']);
 }); 
 
 // Redirect after login

@@ -15,6 +15,11 @@
                         @if(Auth::user()->desa)
                             <div class="mt-1 badge bg-light text-primary">{{ Auth::user()->desa->nama_desa }}</div>
                         @endif
+                        <div class="mt-2">
+                            <a href="{{ route('admin-desa.profile.edit') }}" class="btn btn-sm btn-light text-primary">
+                                <i class="fas fa-user-edit me-1"></i> Edit Profil
+                            </a>
+                        </div>
                     </div>
                 </div>
                 
@@ -80,7 +85,23 @@
                         <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin-desa.dokumen.*') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
                            href="{{ route('admin-desa.dokumen.index') }}">
                             <i class="fas fa-folder me-2"></i>
-                            Dokumen & Bantuan
+                            Dokumen
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item mb-1">
+                        <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin-desa.faq.*') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
+                           href="{{ route('admin-desa.faq.index') }}">
+                            <i class="fas fa-question-circle me-2"></i>
+                            FAQ & Panduan
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item mb-1">
+                        <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin-desa.profile.*') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
+                           href="{{ route('admin-desa.profile.edit') }}">
+                            <i class="fas fa-user-cog me-2"></i>
+                            Profil Saya
                         </a>
                     </li>
                     
