@@ -14,6 +14,7 @@ class AsetTanahWarga extends Model
         'nama_pemilik',
         'nik_pemilik',
         'nomor_sph',
+        'tanggal_sph',
         'luas_tanah',
         'nilai_per_meter',
         'lokasi',
@@ -28,6 +29,7 @@ class AsetTanahWarga extends Model
     {
         return [
             'tanggal_perolehan' => 'date',
+            'tanggal_sph' => 'date',
             'luas_tanah' => 'decimal:2',
             'nilai_per_meter' => 'decimal:0',
         ];

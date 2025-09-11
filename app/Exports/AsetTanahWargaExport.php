@@ -45,8 +45,9 @@ class AsetTanahWargaExport implements FromCollection, WithHeadings, WithMapping,
         if ($this->search) {
             $query->where(function($q) {
                 $q->where('nama_pemilik', 'like', "%{$this->search}%")
-                  ->orWhere('lokasi', 'like', "%{$this->search}%")
-                  ->orWhere('nomor_sertifikat', 'like', "%{$this->search}%");
+                  ->orWhere('nik_pemilik', 'like', "%{$this->search}%")
+                  ->orWhere('nomor_sph', 'like', "%{$this->search}%")
+                  ->orWhere('lokasi', 'like', "%{$this->search}%");
             });
         }
 
@@ -62,13 +63,15 @@ class AsetTanahWargaExport implements FromCollection, WithHeadings, WithMapping,
             'No',
             'Desa',
             'Nama Pemilik',
+            'NIK Pemilik',
+            'Nomor SPH',
             'Jenis Tanah',
-            'Lokasi',
+            'Status Kepemilikan',
             'Luas (m²)',
-            'Nomor Sertifikat',
-            'Tanggal Sertifikat',
-            'Nilai Tanah (Rp)',
-            'Status Pajak',
+            'Nilai/m² (Rp)',
+            'Nilai Total (Rp)',
+            'Lokasi',
+            'Tanggal Perolehan',
             'Keterangan',
         ];
     }
@@ -82,18 +85,29 @@ class AsetTanahWargaExport implements FromCollection, WithHeadings, WithMapping,
     {
         static $no = 0;
         $no++;
+        
+        // Format jenis tanah
+        $jenisTanah = str_replace('_', ' ', ucwords($row->jenis_tanah));
+        
+        // Format status kepemilikan
+        $statusKepemilikan = str_replace('_', ' ', ucwords($row->status_kepemilikan));
+        
+        // Hitung nilai total
+        $nilaiTotal = $row->luas_tanah * $row->nilai_per_meter;
 
         return [
             $no,
             $row->desa->nama_desa,
             $row->nama_pemilik,
-            $row->jenis_tanah,
+            $row->nik_pemilik,
+            $row->nomor_sph,
+            $jenisTanah,
+            $statusKepemilikan,
+            $row->luas_tanah,
+            number_format($row->nilai_per_meter, 0, ',', '.'),
+            number_format($nilaiTotal, 0, ',', '.'),
             $row->lokasi,
-            $row->luas,
-            $row->nomor_sertifikat,
-            $row->tanggal_sertifikat ? $row->tanggal_sertifikat->format('d/m/Y') : '-',
-            number_format($row->nilai_tanah, 0, ',', '.'),
-            $row->status_pajak ? 'Lunas' : 'Belum Lunas',
+            $row->tanggal_perolehan ? $row->tanggal_perolehan->format('d/m/Y') : '-',
             $row->keterangan,
         ];
     }
@@ -115,14 +129,16 @@ class AsetTanahWargaExport implements FromCollection, WithHeadings, WithMapping,
             'A' => 5,  // No
             'B' => 20, // Desa
             'C' => 25, // Nama Pemilik
-            'D' => 15, // Jenis Tanah
-            'E' => 30, // Lokasi
-            'F' => 10, // Luas
-            'G' => 20, // Nomor Sertifikat
-            'H' => 15, // Tanggal Sertifikat
-            'I' => 20, // Nilai Tanah
-            'J' => 15, // Status Pajak
-            'K' => 30, // Keterangan
+            'D' => 20, // NIK Pemilik
+            'E' => 20, // Nomor SPH
+            'F' => 15, // Jenis Tanah
+            'G' => 15, // Status Kepemilikan
+            'H' => 10, // Luas
+            'I' => 15, // Nilai/m²
+            'J' => 20, // Nilai Total
+            'K' => 30, // Lokasi
+            'L' => 15, // Tanggal Perolehan
+            'M' => 30, // Keterangan
         ];
     }
 
@@ -133,7 +149,7 @@ class AsetTanahWargaExport implements FromCollection, WithHeadings, WithMapping,
      */
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:K1')->applyFromArray([
+        $sheet->getStyle('A1:M1')->applyFromArray([
             'font' => [
                 'bold' => true,
                 'color' => ['rgb' => 'FFFFFF'],
@@ -148,21 +164,35 @@ class AsetTanahWargaExport implements FromCollection, WithHeadings, WithMapping,
             ],
         ]);
 
+        // Center align columns
         $sheet->getStyle('A')->applyFromArray([
             'alignment' => [
                 'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
             ],
         ]);
-
-        $sheet->getStyle('F')->applyFromArray([
+        
+        $sheet->getStyle('D')->applyFromArray([
             'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+        ]);
+        
+        $sheet->getStyle('E')->applyFromArray([
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+        ]);
+        
+        $sheet->getStyle('L')->applyFromArray([
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
             ],
         ]);
 
+        // Right align numeric columns
         $sheet->getStyle('H')->applyFromArray([
             'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
             ],
         ]);
 
@@ -174,8 +204,13 @@ class AsetTanahWargaExport implements FromCollection, WithHeadings, WithMapping,
 
         $sheet->getStyle('J')->applyFromArray([
             'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
             ],
         ]);
+        
+        // Format numbers
+        $lastRow = $sheet->getHighestRow();
+        $sheet->getStyle('H2:H'.$lastRow)->getNumberFormat()->setFormatCode('#,##0.00');
+        $sheet->getStyle('I2:J'.$lastRow)->getNumberFormat()->setFormatCode('#,##0');
     }
 }

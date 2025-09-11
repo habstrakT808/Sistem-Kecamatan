@@ -107,8 +107,11 @@ Route::prefix('admin-desa')->name('admin-desa.')->middleware(['auth', 'admin_des
     Route::get('aset-desa/{aset}/riwayat', '\App\Http\Controllers\AdminDesa\AsetDesaController@riwayat')->name('aset-desa.riwayat');
     
     // Aset Tanah Warga
+    Route::get('aset-tanah-warga/rekap', '\App\Http\Controllers\AdminDesa\AsetTanahWargaController@rekap')->name('aset-tanah-warga.rekap');
+    Route::get('aset-tanah-warga/export/excel', '\App\Http\Controllers\AdminDesa\AsetTanahWargaController@exportExcel')->name('aset-tanah-warga.exportExcel');
+    Route::get('aset-tanah-warga/export/rekap-excel', '\App\Http\Controllers\AdminDesa\AsetTanahWargaController@exportRekapExcel')->name('aset-tanah-warga.exportRekapExcel');
+    Route::get('aset-tanah-warga/export/rekap-pdf', '\App\Http\Controllers\AdminDesa\AsetTanahWargaController@exportRekapPdf')->name('aset-tanah-warga.exportRekapPdf');
     Route::resource('aset-tanah-warga', '\App\Http\Controllers\AdminDesa\AsetTanahWargaController');
-    Route::get('aset-tanah-warga/export/excel', '\App\Http\Controllers\AdminDesa\AsetTanahWargaController@exportExcel')->name('aset-tanah-warga.export.excel');
     
     // Dokumen
     Route::resource('dokumen', '\App\Http\Controllers\AdminDesa\DokumenController')->parameters([
