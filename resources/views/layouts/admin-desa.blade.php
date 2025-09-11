@@ -37,6 +37,14 @@
                     </li>
                     
                     <li class="nav-item mb-1">
+                        <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin-desa.profil.*') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
+                           href="{{ route('admin-desa.profil.index') }}">
+                            <i class="fas fa-id-card me-2"></i>
+                            Profil Desa
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item mb-1">
                         <a class="nav-link sidebar-link rounded-2 {{ request()->routeIs('admin-desa.penduduk.*') ? 'bg-white text-primary fw-bold' : 'text-white' }}" 
                            href="{{ route('admin-desa.penduduk.index') }}">
                             <i class="fas fa-users me-2"></i>

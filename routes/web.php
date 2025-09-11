@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AsetTanahWargaController as AdminAsetTanahWargaCo
 use App\Http\Controllers\Admin\DokumenController as AdminDokumenController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AdminDesa\DashboardController as AdminDesaDashboardController;
+use App\Http\Controllers\AdminDesa\ProfilDesaController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -80,6 +81,12 @@ Route::prefix('admin-desa')->name('admin-desa.')->middleware(['auth', 'admin_des
     Route::get('/desa/edit', '\App\Http\Controllers\AdminDesa\DesaController@edit')->name('desa.edit');
     Route::put('/desa', '\App\Http\Controllers\AdminDesa\DesaController@update')->name('desa.update');
     Route::get('/desa/show', '\App\Http\Controllers\AdminDesa\DesaController@show')->name('desa.show');
+    
+    // Profil Desa
+    Route::get('/profil', '\App\Http\Controllers\AdminDesa\ProfilDesaController@index')->name('profil.index');
+    Route::get('/profil/edit', '\App\Http\Controllers\AdminDesa\ProfilDesaController@edit')->name('profil.edit');
+    Route::put('/profil', '\App\Http\Controllers\AdminDesa\ProfilDesaController@update')->name('profil.update');
+    Route::get('/profil/download-monografi', '\App\Http\Controllers\AdminDesa\ProfilDesaController@downloadMonografi')->name('profil.download-monografi');
     
     // Data Penduduk
     Route::resource('penduduk', '\App\Http\Controllers\AdminDesa\PendudukController');
