@@ -3,25 +3,25 @@
 @section('page-title', 'Edit Aset: ' . $asetDesa->nama_aset)
 
 @section('page-actions')
-<div class="btn-group" role="group">
+<div class="btn-group d-flex flex-wrap" role="group">
     <a href="{{ route('admin-desa.aset-desa.show', $asetDesa) }}" class="btn btn-info">
         <i class="fas fa-eye me-1"></i>
-        Lihat Detail
+        <span class="d-none d-md-inline">Lihat Detail</span>
     </a>
     <a href="{{ route('admin-desa.aset-desa.riwayat', $asetDesa) }}" class="btn btn-secondary">
         <i class="fas fa-history me-1"></i>
-        Riwayat
+        <span class="d-none d-md-inline">Riwayat</span>
     </a>
     <a href="{{ route('admin-desa.aset-desa.index') }}" class="btn btn-secondary">
         <i class="fas fa-arrow-left me-1"></i>
-        Kembali
+        <span class="d-none d-md-inline">Kembali</span>
     </a>
 </div>
 @endsection
 
 @section('admin-content')
 <div class="row">
-    <div class="col-lg-12">
+    <div class="col-12">
         <div class="card shadow-sm">
             <div class="card-header bg-warning text-dark">
                 <h5 class="card-title mb-0">
@@ -29,7 +29,7 @@
                     Form Edit Aset Desa
                 </h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-3 p-md-4">
                 <form action="{{ route('admin-desa.aset-desa.update', $asetDesa) }}" method="POST" enctype="multipart/form-data" id="updateForm">
                     @csrf
                     @method('PUT')
@@ -48,19 +48,19 @@
                     <!-- Alasan Update -->
                     <div class="row mb-4">
                         <div class="col-12">
-                            <div class="alert alert-info">
+                            <div class="alert alert-info p-3 p-md-4">
                                 <div class="d-flex">
                                     <div class="me-3">
                                         <i class="fas fa-info-circle fa-2x"></i>
                                     </div>
                                     <div>
-                                        <h5 class="alert-heading">Alasan Perubahan Data</h5>
+                                        <h5 class="alert-heading mb-2">Alasan Perubahan Data</h5>
                                         <p class="mb-0">Silakan isi alasan perubahan data untuk keperluan pencatatan riwayat.</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="update_reason" class="form-label">Alasan Update <span class="text-danger">*</span></label>
+                            <div class="mb-3 mb-md-4">
+                                <label for="update_reason" class="form-label mb-2">Alasan Update <span class="text-danger">*</span></label>
                                 <textarea class="form-control @error('update_reason') is-invalid @enderror" 
                                           id="update_reason" name="update_reason" rows="2" required>{{ old('update_reason') }}</textarea>
                                 @error('update_reason')
@@ -74,10 +74,10 @@
                     <!-- Data Dasar -->
                     <div class="row mb-4">
                         <div class="col-12">
-                            <h5 class="border-bottom pb-2">Data Dasar</h5>
+                            <h5 class="border-bottom pb-2 mb-3">Data Dasar</h5>
                         </div>
                         
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-sm-12 mb-3 mb-md-0">
                             <div class="mb-3">
                                 <label for="nama_aset" class="form-label">Nama Aset <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('nama_aset') is-invalid @enderror" 
@@ -88,7 +88,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-sm-12">
                             <div class="mb-3">
                                 <label for="kategori_aset" class="form-label">Kategori Aset <span class="text-danger">*</span></label>
                                 <select class="form-select @error('kategori_aset') is-invalid @enderror" 
@@ -121,10 +121,10 @@
                     <!-- Data Nilai dan Kondisi -->
                     <div class="row mb-4">
                         <div class="col-12">
-                            <h5 class="border-bottom pb-2">Nilai dan Kondisi</h5>
+                            <h5 class="border-bottom pb-2 mb-3">Nilai dan Kondisi</h5>
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-md-4 col-sm-12 mb-3">
                             <div class="mb-3">
                                 <label for="nilai_perolehan" class="form-label">Nilai Perolehan (Rp)</label>
                                 <input type="number" class="form-control @error('nilai_perolehan') is-invalid @enderror" 
@@ -135,7 +135,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-md-4 col-sm-12 mb-3">
                             <div class="mb-3">
                                 <label for="nilai_sekarang" class="form-label">Nilai Sekarang (Rp)</label>
                                 <input type="number" class="form-control @error('nilai_sekarang') is-invalid @enderror" 
@@ -146,7 +146,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-md-4 col-sm-12 mb-3">
                             <div class="mb-3">
                                 <label for="tanggal_perolehan" class="form-label">Tanggal Perolehan <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control @error('tanggal_perolehan') is-invalid @enderror" 
@@ -157,7 +157,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-md-4 col-sm-12 mb-3">
                             <div class="mb-3">
                                 <label for="kondisi" class="form-label">Kondisi <span class="text-danger">*</span></label>
                                 <select class="form-select @error('kondisi') is-invalid @enderror" 
@@ -173,7 +173,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-8">
+                        <div class="col-md-8 col-sm-12">
                             <div class="mb-3">
                                 <label for="lokasi" class="form-label">Lokasi <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('lokasi') is-invalid @enderror" 
@@ -188,10 +188,10 @@
                     <!-- Data Tambahan -->
                     <div class="row mb-4">
                         <div class="col-12">
-                            <h5 class="border-bottom pb-2">Data Tambahan</h5>
+                            <h5 class="border-bottom pb-2 mb-3">Data Tambahan</h5>
                         </div>
                         
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-sm-12 mb-3 mb-md-0">
                             <div class="mb-3">
                                 <label for="bukti_kepemilikan" class="form-label">Bukti Kepemilikan</label>
                                 <input type="file" class="form-control @error('bukti_kepemilikan') is-invalid @enderror" 
@@ -206,14 +206,15 @@
                                     <p class="mb-1">Dokumen saat ini:</p>
                                     <a href="{{ Storage::url($asetDesa->bukti_kepemilikan) }}" target="_blank" class="btn btn-sm btn-outline-primary">
                                         <i class="fas fa-file me-1"></i>
-                                        Lihat Dokumen
+                                        <span class="d-none d-md-inline">Lihat Dokumen</span>
+                                        <span class="d-inline d-md-none">Lihat</span>
                                     </a>
                                 </div>
                                 @endif
                             </div>
                         </div>
                         
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-sm-12">
                             <div class="mb-3">
                                 <label for="keterangan" class="form-label">Keterangan</label>
                                 <textarea class="form-control @error('keterangan') is-invalid @enderror" 
@@ -225,11 +226,11 @@
                         </div>
                     </div>
                     
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{{ route('admin-desa.aset-desa.index') }}" class="btn btn-secondary me-md-2">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 pt-2">
+                        <a href="{{ route('admin-desa.aset-desa.index') }}" class="btn btn-secondary me-md-2 w-100 w-md-auto mb-2 mb-md-0 py-2 px-4">
                             <i class="fas fa-times-circle me-1"></i> Batal
                         </a>
-                        <button type="submit" class="btn btn-warning">
+                        <button type="submit" class="btn btn-warning w-100 w-md-auto py-2 px-4">
                             <i class="fas fa-save me-1"></i> Simpan Perubahan
                         </button>
                     </div>

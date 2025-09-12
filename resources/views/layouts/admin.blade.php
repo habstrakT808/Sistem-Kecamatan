@@ -3,6 +3,16 @@
 @section('content')
 <div class="container-fluid p-0">
     <div class="row g-0">
+        <!-- Mobile Navbar Toggle -->
+        <div class="d-md-none bg-gradient-primary text-white p-3 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-user-circle fs-4 me-2"></i>
+                <span>Admin Kecamatan</span>
+            </div>
+            <button class="btn btn-link text-white" type="button" data-bs-toggle="collapse" data-bs-target=".sidebar" aria-expanded="false">
+                <i class="fas fa-bars fs-4"></i>
+            </button>
+        </div>
         <!-- Sidebar -->
         <nav class="col-md-3 col-lg-2 d-md-block bg-gradient-primary sidebar collapse">
             <div class="position-sticky pt-3">
@@ -114,7 +124,7 @@
         </nav>
 
         <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-3 px-md-4">
             <!-- Header -->
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2 text-dark fw-bold">@yield('page-title', 'Dashboard')</h1>

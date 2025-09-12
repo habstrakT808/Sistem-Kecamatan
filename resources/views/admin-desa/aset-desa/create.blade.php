@@ -6,7 +6,7 @@
 <div class="btn-group" role="group">
     <a href="{{ route('admin-desa.aset-desa.index') }}" class="btn btn-secondary">
         <i class="fas fa-arrow-left me-1"></i>
-        Kembali
+        <span class="d-none d-md-inline">Kembali</span>
     </a>
 </div>
 @endsection
@@ -18,10 +18,10 @@
             <div class="card-header bg-primary text-white">
                 <h5 class="card-title mb-0">
                     <i class="fas fa-plus-circle me-2"></i>
-                    Form Tambah Aset Desa
+                    <span class="d-none d-sm-inline">Form </span>Tambah Aset Desa
                 </h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-3 p-md-4">
                 <form action="{{ route('admin-desa.aset-desa.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     
@@ -38,12 +38,12 @@
                     <!-- Data Dasar -->
                     <div class="row mb-4">
                         <div class="col-12">
-                            <h5 class="border-bottom pb-2">Data Dasar</h5>
+                            <h5 class="border-bottom pb-2 mb-3">Data Dasar</h5>
                         </div>
                         
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="nama_aset" class="form-label">Nama Aset <span class="text-danger">*</span></label>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="mb-3 mb-md-4">
+                                <label for="nama_aset" class="form-label mb-2">Nama Aset <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('nama_aset') is-invalid @enderror" 
                                        id="nama_aset" name="nama_aset" value="{{ old('nama_aset') }}" required>
                                 @error('nama_aset')
@@ -52,9 +52,9 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="kategori_aset" class="form-label">Kategori Aset <span class="text-danger">*</span></label>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="mb-3 mb-md-4">
+                                <label for="kategori_aset" class="form-label mb-2">Kategori Aset <span class="text-danger">*</span></label>
                                 <select class="form-select @error('kategori_aset') is-invalid @enderror" 
                                         id="kategori_aset" name="kategori_aset" required>
                                     <option value="" selected disabled>Pilih Kategori</option>
@@ -71,8 +71,8 @@
                         <input type="hidden" name="desa_id" value="{{ $desa->id }}">
                         
                         <div class="col-md-12">
-                            <div class="mb-3">
-                                <label for="deskripsi" class="form-label">Deskripsi</label>
+                            <div class="mb-3 mb-md-4">
+                                <label for="deskripsi" class="form-label mb-2">Deskripsi</label>
                                 <textarea class="form-control @error('deskripsi') is-invalid @enderror" 
                                           id="deskripsi" name="deskripsi" rows="3">{{ old('deskripsi') }}</textarea>
                                 @error('deskripsi')
@@ -85,10 +85,10 @@
                     <!-- Data Nilai dan Kondisi -->
                     <div class="row mb-4">
                         <div class="col-12">
-                            <h5 class="border-bottom pb-2">Nilai dan Kondisi</h5>
+                            <h5 class="border-bottom pb-2 mb-3">Nilai dan Kondisi</h5>
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
                             <div class="mb-3">
                                 <label for="nilai_perolehan" class="form-label">Nilai Perolehan (Rp)</label>
                                 <input type="number" class="form-control @error('nilai_perolehan') is-invalid @enderror" 
@@ -99,7 +99,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
                             <div class="mb-3">
                                 <label for="nilai_sekarang" class="form-label">Nilai Sekarang (Rp)</label>
                                 <input type="number" class="form-control @error('nilai_sekarang') is-invalid @enderror" 
@@ -110,7 +110,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
                             <div class="mb-3">
                                 <label for="tanggal_perolehan" class="form-label">Tanggal Perolehan <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control @error('tanggal_perolehan') is-invalid @enderror" 
@@ -121,7 +121,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
                             <div class="mb-3">
                                 <label for="kondisi" class="form-label">Kondisi <span class="text-danger">*</span></label>
                                 <select class="form-select @error('kondisi') is-invalid @enderror" 
@@ -137,7 +137,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-8">
+                        <div class="col-lg-8 col-md-6 col-sm-12">
                             <div class="mb-3">
                                 <label for="lokasi" class="form-label">Lokasi <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('lokasi') is-invalid @enderror" 
@@ -152,10 +152,10 @@
                     <!-- Data Tambahan -->
                     <div class="row mb-4">
                         <div class="col-12">
-                            <h5 class="border-bottom pb-2">Data Tambahan</h5>
+                            <h5 class="border-bottom pb-2 mb-3">Data Tambahan</h5>
                         </div>
                         
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-sm-12">
                             <div class="mb-3">
                                 <label for="bukti_kepemilikan" class="form-label">Bukti Kepemilikan</label>
                                 <input type="file" class="form-control @error('bukti_kepemilikan') is-invalid @enderror" 
@@ -163,11 +163,11 @@
                                 @error('bukti_kepemilikan')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">Format: PDF, JPG, JPEG, PNG. Maks: 2MB</small>
+                                <small class="text-muted d-block mt-1">Format: PDF, JPG, JPEG, PNG. Maks: 2MB</small>
                             </div>
                         </div>
                         
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-sm-12">
                             <div class="mb-3">
                                 <label for="keterangan" class="form-label">Keterangan</label>
                                 <textarea class="form-control @error('keterangan') is-invalid @enderror" 
@@ -179,11 +179,11 @@
                         </div>
                     </div>
                     
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{{ route('admin-desa.aset-desa.index') }}" class="btn btn-secondary me-md-2">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 pt-2">
+                        <a href="{{ route('admin-desa.aset-desa.index') }}" class="btn btn-secondary me-md-2 w-100 w-md-auto mb-2 mb-md-0 py-2 px-4">
                             <i class="fas fa-times-circle me-1"></i> Batal
                         </a>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary w-100 w-md-auto py-2 px-4">
                             <i class="fas fa-save me-1"></i> Simpan
                         </button>
                     </div>

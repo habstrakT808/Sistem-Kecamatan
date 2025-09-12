@@ -39,7 +39,7 @@ class ProfileController extends Controller
             'address' => 'nullable|string',
         ]);
 
-        $user->update([
+        User::where('id', $user->id)->update([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
@@ -79,7 +79,7 @@ class ProfileController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user->update([
+        User::where('id', $user->id)->update([
             'password' => Hash::make($request->password),
         ]);
 
