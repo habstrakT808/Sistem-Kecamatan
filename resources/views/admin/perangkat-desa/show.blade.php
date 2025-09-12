@@ -92,8 +92,8 @@
                                 <td class="fw-bold">SK Pengangkatan:</td>
                                 <td>
                                     @if($perangkatDesa->sk_pengangkatan)
-                                        <a href="{{ Storage::url($perangkatDesa->sk_pengangkatan) }}" 
-                                           target="_blank" class="btn btn-sm btn-outline-info">
+                                        <a href="{{ route('admin.perangkat-desa.download-sk', $perangkatDesa) }}" 
+                                           class="btn btn-sm btn-outline-info">
                                             <i class="fas fa-download me-1"></i>
                                             Download SK
                                         </a>

@@ -112,12 +112,19 @@
                 height: 100%;
                 z-index: 1030;
                 overflow-y: auto;
+                padding-top: 0;
                 transform: translateX(-100%);
                 transition: transform 0.3s ease;
             }
             
             .sidebar.show {
                 transform: translateX(0);
+            }
+            
+            .sidebar .position-sticky {
+                height: 100vh;
+                overflow-y: auto;
+                padding-bottom: 5rem;
             }
             
             .btn-sm {
@@ -226,6 +233,13 @@
                 margin-bottom: 0.25rem;
             }
             
+            /* Improve mobile header */
+            .d-md-none.bg-gradient-primary {
+                position: sticky;
+                top: 0;
+                z-index: 1020;
+            }
+            
             .btn-group > .btn {
                 padding: 0.375rem 0.5rem;
             }
@@ -293,6 +307,17 @@
             
             .btn-group-sm > .btn, .btn-sm {
                 padding: 0.25rem 0.5rem;
+            }
+            
+            /* Improve sidebar on tablets */
+            .sidebar .position-sticky {
+                padding-bottom: 2rem;
+            }
+            
+            /* Improve main content spacing */
+            main {
+                padding-left: 1rem;
+                padding-right: 1rem;
             }
         }
     </style>
@@ -404,8 +429,20 @@
                 if (main) {
                     if (window.innerWidth < 576) {
                         main.classList.add('pt-2');
+                        main.classList.add('px-2');
                     } else {
                         main.classList.remove('pt-2');
+                        main.classList.remove('px-2');
+                    }
+                }
+                
+                // Adjust sidebar toggle visibility
+                const sidebarToggle = document.querySelector('[data-bs-target=".sidebar"]');
+                if (sidebarToggle) {
+                    if (window.innerWidth >= 768) {
+                        sidebarToggle.style.display = 'none';
+                    } else {
+                        sidebarToggle.style.display = 'block';
                     }
                 }
                 

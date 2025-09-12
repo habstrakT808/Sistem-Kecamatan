@@ -17,9 +17,6 @@
             <li><a class="dropdown-item" href="{{ route('admin.perangkat-desa.export.excel', request()->query()) }}">
                 <i class="fas fa-file-excel me-2"></i>Excel
             </a></li>
-            <li><a class="dropdown-item" href="#" onclick="alert('Fitur export PDF akan segera tersedia')">
-                <i class="fas fa-file-pdf me-2"></i>PDF
-            </a></li>
         </ul>
     </div>
 </div>

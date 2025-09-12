@@ -138,10 +138,15 @@ class PerangkatDesaController extends Controller
 
         try {
             // Mulai transaksi database
-            \DB::beginTransaction();
+            \Illuminate\Support\Facades\DB::beginTransaction();
             
-            $data = $request->except('_token', '_method');
+            // Simpan alasan update terlebih dahulu
+            $updateReason = $request->input('update_reason');
+            
+            // Siapkan data untuk update
+            $data = $request->except('_token', '_method', 'update_reason');
             $data['updated_by'] = Auth::id();
+            $data['update_reason'] = $updateReason;
 
             // Upload SK baru
             if ($request->hasFile('sk_pengangkatan')) {
@@ -160,13 +165,13 @@ class PerangkatDesaController extends Controller
             $perangkatDesa->desa->updateLastUpdated();
             
             // Commit transaksi jika semua operasi berhasil
-            \DB::commit();
+            \Illuminate\Support\Facades\DB::commit();
 
-            return redirect()->route('admin.perangkat-desa.index')
+            return redirect()->route('admin.perangkat-desa.show', $perangkatDesa)
                 ->with('success', 'Data perangkat desa berhasil diperbarui.');
         } catch (\Exception $e) {
             // Rollback transaksi jika terjadi error
-            \DB::rollback();
+            \Illuminate\Support\Facades\DB::rollBack();
             
             return redirect()->back()
                 ->withInput()
@@ -194,7 +199,7 @@ class PerangkatDesaController extends Controller
 
     public function riwayat(PerangkatDesa $perangkat)
     {
-        $riwayat = $perangkat->riwayat()->with('changedBy')->orderBy('created_at', 'desc')->paginate(10);
+        $riwayat = $perangkat->riwayat()->with('user')->orderBy('created_at', 'desc')->paginate(10);
         return view('admin.perangkat-desa.riwayat', compact('perangkat', 'riwayat'));
     }
     
@@ -213,5 +218,26 @@ class PerangkatDesaController extends Controller
             ),
             $filename
         );
+    }
+    
+    /**
+     * Download SK Pengangkatan Perangkat Desa
+     */
+    public function downloadSK(PerangkatDesa $perangkatDesa)
+    {
+        if (!$perangkatDesa->sk_pengangkatan) {
+            return back()->with('error', 'File SK Pengangkatan tidak ditemukan.');
+        }
+        
+        $path = storage_path('app/public/' . $perangkatDesa->sk_pengangkatan);
+        
+        if (!file_exists($path)) {
+            return back()->with('error', 'File SK Pengangkatan tidak ditemukan di server.');
+        }
+        
+        $extension = pathinfo($perangkatDesa->sk_pengangkatan, PATHINFO_EXTENSION);
+        $fileName = 'SK_Pengangkatan_' . str_replace(' ', '_', $perangkatDesa->nama_lengkap) . '_' . $perangkatDesa->jabatan . '.' . $extension;
+        
+        return response()->download($path, $fileName);
     }
 }

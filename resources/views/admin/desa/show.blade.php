@@ -139,8 +139,8 @@
                     <div class="col-md-6">
                         <h6 class="fw-bold">SK Kepala Desa:</h6>
                         @if($desa->sk_kepala_desa)
-                            <a href="{{ Storage::url($desa->sk_kepala_desa) }}" 
-                               target="_blank" class="btn btn-outline-primary btn-sm">
+                            <a href="{{ route('admin.desa.download-sk', $desa) }}" 
+                               class="btn btn-outline-primary btn-sm">
                                 <i class="fas fa-download me-1"></i>
                                 Download SK
                             </a>
@@ -151,8 +151,8 @@
                     <div class="col-md-6">
                         <h6 class="fw-bold">Monografi Desa:</h6>
                         @if($desa->monografi_file)
-                            <a href="{{ Storage::url($desa->monografi_file) }}" 
-                               target="_blank" class="btn btn-outline-primary btn-sm">
+                            <a href="{{ route('admin.desa.download-monografi', $desa) }}" 
+                               class="btn btn-outline-primary btn-sm">
                                 <i class="fas fa-download me-1"></i>
                                 Download Monografi
                             </a>

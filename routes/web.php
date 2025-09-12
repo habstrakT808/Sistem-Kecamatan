@@ -36,11 +36,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Data Desa
     Route::resource('desa', AdminDesaController::class);
     Route::post('desa/{desa}/update-coordinates', [AdminDesaController::class, 'updateCoordinates'])->name('desa.update-coordinates');
+    Route::get('desa/{desa}/download-sk', [AdminDesaController::class, 'downloadSK'])->name('desa.download-sk');
+    Route::get('desa/{desa}/download-monografi', [AdminDesaController::class, 'downloadMonografi'])->name('desa.download-monografi');
     
     // Perangkat Desa
     Route::get('perangkat-desa/export/excel', [AdminPerangkatDesaController::class, 'exportExcel'])->name('perangkat-desa.export.excel');
     Route::resource('perangkat-desa', AdminPerangkatDesaController::class);
     Route::get('perangkat-desa/{perangkat}/riwayat', [AdminPerangkatDesaController::class, 'riwayat'])->name('perangkat-desa.riwayat');
+    Route::get('perangkat-desa/{perangkatDesa}/download-sk', [AdminPerangkatDesaController::class, 'downloadSK'])->name('perangkat-desa.download-sk');
     
     // Data Penduduk
     Route::resource('penduduk', AdminPendudukController::class);
@@ -81,6 +84,8 @@ Route::prefix('admin-desa')->name('admin-desa.')->middleware(['auth', 'admin_des
     Route::get('/desa/edit', '\App\Http\Controllers\AdminDesa\DesaController@edit')->name('desa.edit');
     Route::put('/desa', '\App\Http\Controllers\AdminDesa\DesaController@update')->name('desa.update');
     Route::get('/desa/show', '\App\Http\Controllers\AdminDesa\DesaController@show')->name('desa.show');
+    Route::get('/desa/download-sk', '\App\Http\Controllers\AdminDesa\DesaController@downloadSK')->name('desa.download-sk');
+    Route::get('/desa/download-monografi', '\App\Http\Controllers\AdminDesa\DesaController@downloadMonografi')->name('desa.download-monografi');
     
     // Profil Desa
     Route::get('/profil', '\App\Http\Controllers\AdminDesa\ProfilDesaController@index')->name('profil.index');

@@ -336,6 +336,7 @@ class PerangkatDesaController extends Controller
         }
         
         $riwayat = RiwayatPerangkatDesa::where('perangkat_desa_id', $perangkat->id)
+            ->with('user') // Memuat relasi user untuk menghindari error undefined relationship
             ->orderBy('created_at', 'desc')
             ->get();
             

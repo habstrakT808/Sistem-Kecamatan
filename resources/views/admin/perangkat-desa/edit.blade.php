@@ -30,9 +30,11 @@
                 </h5>
             </div>
             <div class="card-body">
-                <form action="{{ route('admin.perangkat-desa.update', $perangkatDesa) }}" method="POST" enctype="multipart/form-data">
+                <!-- Debug: ID Perangkat Desa = {{ $perangkatDesa->id }} -->
+                <form id="edit-perangkat-form" action="{{ route('admin.perangkat-desa.update', $perangkatDesa->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
+                    <input type="hidden" name="_method" value="PUT">
                     
                     @if(session('error'))
                     <div class="alert alert-danger">
@@ -41,14 +43,18 @@
                     @endif
                     
                     <!-- Alasan Update -->
-                    <div class="alert alert-info">
-                        <h6><i class="fas fa-info-circle me-2"></i>Alasan Perubahan</h6>
-                        <textarea class="form-control @error('update_reason') is-invalid @enderror" 
-                                  name="update_reason" rows="2" 
-                                  placeholder="Jelaskan alasan perubahan data ini..." required>{{ old('update_reason') }}</textarea>
-                        @error('update_reason')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                    <div class="mb-3 border p-3 rounded bg-light" id="alasan_update_container">
+                        <h5 class="mb-3"><i class="fas fa-info-circle me-2"></i>Alasan Perubahan</h5>
+                        <div class="form-group">
+                            <label for="update_reason" class="form-label fw-bold">Alasan Perubahan Data <span class="text-danger">*</span></label>
+                            <textarea class="form-control @error('update_reason') is-invalid @enderror" 
+                                    id="update_reason" name="update_reason" rows="4" 
+                                    placeholder="Jelaskan alasan perubahan data ini..." required>{{ old('update_reason', $perangkatDesa->update_reason) }}</textarea>
+                            <small class="text-muted">Wajib diisi untuk menjelaskan alasan perubahan data</small>
+                            @error('update_reason')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <!-- Data Dasar -->
@@ -237,10 +243,18 @@
                             <i class="fas fa-times me-1"></i>
                             Batal
                         </a>
-                        <button type="submit" class="btn btn-warning">
+                        <button type="submit" id="btn-update-perangkat" class="btn btn-warning">
                             <i class="fas fa-save me-1"></i>
                             Update Data
                         </button>
+                    </div>
+                    
+                    <!-- Debug info -->
+                    <div class="mt-3 d-none" id="debug-info">
+                        <div class="alert alert-info">
+                            <h6>Debug Info:</h6>
+                            <div id="debug-output"></div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -290,43 +304,326 @@
 @endsection
 
 @push('scripts')
+<style>
+    /* Ensure alasan update container is always visible */
+    #alasan_update_container {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: relative !important;
+        z-index: 1000 !important;
+    }
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Debug form submission
+    const form = document.getElementById('edit-perangkat-form');
+    const debugInfo = document.getElementById('debug-info');
+    const debugOutput = document.getElementById('debug-output');
+    const submitBtn = document.getElementById('btn-update-perangkat');
+    const manualSubmitBtn = document.getElementById('btn-manual-submit');
+    
+    console.log('Form detected:', form);
+    
+    // Ensure alasan update container is visible on page load
+    window.setTimeout(function() {
+        ensureAlasanUpdateVisible();
+        console.log('Ensuring alasan update visibility on page load');
+    }, 100);
+    
+    function logDebug(message) {
+        console.log(message);
+        if (debugOutput) {
+            const logEntry = document.createElement('div');
+            logEntry.textContent = message;
+            debugOutput.appendChild(logEntry);
+        }
+    }
+    
+    // Ensure alasan update container is visible
+    function ensureAlasanUpdateVisible() {
+        const alasanContainer = document.getElementById('alasan_update_container');
+        if (alasanContainer) {
+            alasanContainer.style.display = 'block';
+            alasanContainer.style.visibility = 'visible';
+            alasanContainer.style.opacity = '1';
+            logDebug('Ensuring alasan update container is visible');
+        }
+    }
+    
+    // Call this function on page load
+    ensureAlasanUpdateVisible();
+    
+    // Set interval to ensure alasan update container remains visible
+    setInterval(function() {
+        ensureAlasanUpdateVisible();
+    }, 1000); // Check every second
+    
+    // Function to manually submit form
+    function manualSubmitForm(event) {
+        // Prevent default form submission if event is provided
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        
+        // Ensure alasan update container is visible
+        ensureAlasanUpdateVisible();
+        
+        logDebug('Manual form submission initiated');
+        
+        // Show debug info
+        debugInfo.classList.remove('d-none');
+        
+        // Validate required fields
+        const requiredFields = [
+            { name: 'update_reason', label: 'Alasan perubahan data', id: 'update_reason' },
+            { name: 'nama_lengkap', label: 'Nama lengkap', id: 'nama_lengkap' },
+            { name: 'jabatan', label: 'Jabatan', id: 'jabatan' },
+            { name: 'nik', label: 'NIK', id: 'nik' },
+            { name: 'jenis_kelamin', label: 'Jenis kelamin', id: 'jenis_kelamin' },
+            { name: 'tempat_lahir', label: 'Tempat lahir', id: 'tempat_lahir' },
+            { name: 'tanggal_lahir', label: 'Tanggal lahir', id: 'tanggal_lahir' },
+            { name: 'pendidikan_terakhir', label: 'Pendidikan terakhir', id: 'pendidikan_terakhir' },
+            { name: 'no_telepon', label: 'Nomor telepon', id: 'no_telepon' },
+            { name: 'alamat', label: 'Alamat', id: 'alamat' },
+            { name: 'tanggal_mulai_tugas', label: 'Tanggal mulai tugas', id: 'tanggal_mulai_tugas' },
+            { name: 'status', label: 'Status', id: 'status' }
+        ];
+        
+        // Validasi alasan perubahan terlebih dahulu
+        const updateReasonField = document.getElementById('update_reason');
+        if (!updateReasonField || !updateReasonField.value.trim()) {
+            logDebug('ERROR: update_reason is required');
+            alert('Alasan perubahan data wajib diisi!');
+            if (updateReasonField) {
+                updateReasonField.focus();
+                // Scroll ke elemen alasan perubahan
+                updateReasonField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return false;
+        }
+        
+        // Validasi field lainnya
+        for (const field of requiredFields) {
+            if (field.name === 'update_reason') continue; // Sudah divalidasi di atas
+            
+            // Coba cari elemen dengan ID terlebih dahulu, jika tidak ada gunakan name
+            let element = null;
+            if (field.id) {
+                element = document.getElementById(field.id);
+            }
+            
+            if (!element) {
+                element = document.querySelector(`[name="${field.name}"]`);
+            }
+            
+            if (!element || !element.value.trim()) {
+                logDebug(`ERROR: ${field.name} is required`);
+                alert(`${field.label} wajib diisi!`);
+                if (element) {
+                    element.focus();
+                    // Scroll ke elemen yang error
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return false;
+            }
+            
+            // Validate NIK format
+            if (field.name === 'nik') {
+                const nikValue = element.value.trim();
+                if (nikValue.length !== 16 || !/^\d+$/.test(nikValue)) {
+                    logDebug('ERROR: NIK must be 16 digits');
+                    alert('NIK harus terdiri dari 16 digit angka!');
+                    element.focus();
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return false;
+                }
+            }
+            
+            // Validate date fields
+            if (field.name === 'tanggal_lahir' || field.name === 'tanggal_mulai_tugas' || field.name === 'tanggal_akhir_tugas') {
+                if (element.value) {
+                    const dateValue = new Date(element.value);
+                    if (isNaN(dateValue.getTime())) {
+                        logDebug(`ERROR: ${field.name} is not a valid date`);
+                        alert(`${field.label} tidak valid!`);
+                        element.focus();
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        // Validate tanggal_akhir_tugas is after tanggal_mulai_tugas
+        const tanggalMulaiTugas = document.querySelector('[name="tanggal_mulai_tugas"]');
+        const tanggalAkhirTugas = document.querySelector('[name="tanggal_akhir_tugas"]');
+        
+        if (tanggalMulaiTugas && tanggalAkhirTugas && tanggalMulaiTugas.value && tanggalAkhirTugas.value) {
+            const startDate = new Date(tanggalMulaiTugas.value);
+            const endDate = new Date(tanggalAkhirTugas.value);
+            
+            if (endDate <= startDate) {
+                logDebug('ERROR: tanggal_akhir_tugas must be after tanggal_mulai_tugas');
+                alert('Tanggal akhir tugas harus setelah tanggal mulai tugas!');
+                tanggalAkhirTugas.focus();
+                tanggalAkhirTugas.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false;
+            }
+        }
+        
+        // Semua validasi berhasil, tampilkan informasi debug
+        logDebug('All validations passed, submitting form');
+        
+        try {
+            // Pastikan form memiliki method dan action yang benar
+            if (!form.method) form.method = 'POST';
+            if (!form.action) form.action = window.location.href;
+            
+            // Pastikan _method hidden field ada untuk Laravel
+            let methodField = form.querySelector('input[name="_method"]');
+            if (!methodField) {
+                methodField = document.createElement('input');
+                methodField.type = 'hidden';
+                methodField.name = '_method';
+                methodField.value = 'PUT';
+                form.appendChild(methodField);
+            }
+            
+            // Pastikan enctype sudah benar untuk file upload
+            form.enctype = 'multipart/form-data';
+            
+            // Submit form secara normal
+            logDebug('Submitting form with action: ' + form.action + ' and method: ' + form.method);
+            form.submit();
+            return true;
+        } catch (error) {
+            logDebug('ERROR during manual submission: ' + error.message);
+            console.error('Manual submission error:', error);
+            alert('Terjadi kesalahan saat mengirim form: ' + error.message);
+            return false;
+        }
+        }
+    }
+    
+    if (form) {
+        logDebug('Form properties: ' + 
+                 'action=' + form.action + ', ' +
+                 'method=' + form.method + ', ' +
+                 'enctype=' + form.enctype);
+        
+        // Ensure form submission works with both approaches
+        form.addEventListener('submit', function(e) {
+            // Ensure alasan update container is visible
+            ensureAlasanUpdateVisible();
+            
+            // Prevent default initially
+            e.preventDefault();
+            e.stopPropagation();
+            logDebug('Form submit event triggered');
+            
+            // Run validation and submit manually if valid
+            if (manualSubmitForm(e) === true) {
+                logDebug('Validation passed, submitting form');
+                // Form will be submitted inside manualSubmitForm
+            } else {
+                logDebug('Validation failed, preventing form submission');
+                ensureAlasanUpdateVisible(); // Ensure it's still visible after validation fails
+                return false;
+            }
+        });
+        
+        // Ensure submit button works with direct form submission
+        if (submitBtn) {
+            logDebug('Submit button found: ' + submitBtn.textContent.trim());
+            
+            submitBtn.addEventListener('click', function(e) {
+                logDebug('Submit button clicked');
+                
+                // If normal submission doesn't work, try programmatic submission
+                setTimeout(function() {
+                    // This timeout gives the normal form submission a chance to work first
+                    // Only show debug info if we're still on the page after 500ms
+                    debugInfo.classList.remove('d-none');
+                }, 500);
+            });
+            
+            // Add alternative submission method
+            submitBtn.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                ensureAlasanUpdateVisible(); // Ensure alasan update container is visible
+                logDebug('Double-click detected - trying alternative submission');
+                manualSubmitForm(e);
+            });
+            
+            // Also ensure visibility on normal click
+            submitBtn.addEventListener('click', function() {
+                ensureAlasanUpdateVisible();
+                logDebug('Submit button clicked - ensuring alasan update visibility');
+            });
+        } else {
+            console.error('Submit button not found!');
+            logDebug('ERROR: Submit button not found!');
+        }
+        
+        // Add manual submit button handler
+        if (manualSubmitBtn) {
+            logDebug('Manual submit button found');
+            
+            manualSubmitBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                ensureAlasanUpdateVisible(); // Ensure alasan update container is visible
+                logDebug('Manual submit button clicked');
+                manualSubmitForm(e);
+            });
+        } else {
+            logDebug('WARNING: Manual submit button not found');
+        }
+    }
+    
     // Auto calculate age
     const tanggalLahirInput = document.getElementById('tanggal_lahir');
     const usiaDisplay = document.getElementById('usia_display');
     
-    tanggalLahirInput.addEventListener('change', function() {
-        if (this.value) {
-            const birthDate = new Date(this.value);
-            const today = new Date();
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
+    if (tanggalLahirInput && usiaDisplay) {
+        tanggalLahirInput.addEventListener('change', function() {
+            if (this.value) {
+                const birthDate = new Date(this.value);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                
+                usiaDisplay.value = age + ' tahun';
             }
-            
-            usiaDisplay.value = age + ' tahun';
-        }
-    });
+        });
+    }
 
     // Auto format NIK
     const nikInput = document.getElementById('nik');
-    nikInput.addEventListener('input', function() {
-        this.value = this.value.replace(/\D/g, '');
-        if (this.value.length > 16) {
-            this.value = this.value.slice(0, 16);
-        }
-    });
+    if (nikInput) {
+        nikInput.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '');
+            if (this.value.length > 16) {
+                this.value = this.value.slice(0, 16);
+            }
+        });
+    }
 
     // Validate end date
     const tanggalMulaiInput = document.getElementById('tanggal_mulai_tugas');
     const tanggalAkhirInput = document.getElementById('tanggal_akhir_tugas');
     
-    tanggalMulaiInput.addEventListener('change', function() {
-        tanggalAkhirInput.min = this.value;
-    });
+    if (tanggalMulaiInput && tanggalAkhirInput) {
+        tanggalMulaiInput.addEventListener('change', function() {
+            tanggalAkhirInput.min = this.value;
+        });
+    }
 });
 </script>
 @endpush

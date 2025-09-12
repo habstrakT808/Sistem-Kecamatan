@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Desa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DesaController extends Controller
 {
@@ -154,6 +155,52 @@ class DesaController extends Controller
 
         return redirect()->route('admin.desa.index')
             ->with('success', 'Data desa berhasil dihapus.');
+    }
+    
+    /**
+     * Download SK Kepala Desa
+     *
+     * @param  \App\Models\Desa  $desa
+     * @return \Illuminate\Http\Response
+     */
+    public function downloadSK(Desa $desa)
+    {
+        // Cek apakah file ada di storage
+        if (!$desa->sk_kepala_desa || !Storage::disk('public')->exists($desa->sk_kepala_desa)) {
+            return redirect()->back()->with('error', 'File SK Kepala Desa tidak ditemukan.');
+        }
+        
+        // Ambil ekstensi file dari path
+        $extension = pathinfo($desa->sk_kepala_desa, PATHINFO_EXTENSION);
+        
+        // Buat nama file yang aman untuk didownload
+        $downloadName = 'SK_Kepala_Desa_' . str_replace(' ', '_', $desa->nama_desa) . '.' . $extension;
+        
+        // Return file untuk didownload
+        return response()->download(storage_path('app/public/' . $desa->sk_kepala_desa), $downloadName);
+    }
+    
+    /**
+     * Download Monografi Desa
+     *
+     * @param  \App\Models\Desa  $desa
+     * @return \Illuminate\Http\Response
+     */
+    public function downloadMonografi(Desa $desa)
+    {
+        // Cek apakah file ada di storage
+        if (!$desa->monografi_file || !Storage::disk('public')->exists($desa->monografi_file)) {
+            return redirect()->back()->with('error', 'File Monografi Desa tidak ditemukan.');
+        }
+        
+        // Ambil ekstensi file dari path
+        $extension = pathinfo($desa->monografi_file, PATHINFO_EXTENSION);
+        
+        // Buat nama file yang aman untuk didownload
+        $downloadName = 'Monografi_Desa_' . str_replace(' ', '_', $desa->nama_desa) . '.' . $extension;
+        
+        // Return file untuk didownload
+        return response()->download(storage_path('app/public/' . $desa->monografi_file), $downloadName);
     }
 
     public function updateCoordinates(Request $request, Desa $desa)

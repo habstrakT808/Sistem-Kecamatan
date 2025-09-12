@@ -98,7 +98,7 @@
                                         <div class="card-body">
                                             <div class="mb-3">
                                                 <strong>Alasan Perubahan:</strong>
-                                                <p>{{ $item->reason ?: 'Pembuatan data awal' }}</p>
+                                                <p>{{ $item->change_reason ?: 'Pembuatan data awal' }}</p>
                                             </div>
                                             
                                             <div class="mb-3">
@@ -118,9 +118,9 @@
                                                         </thead>
                                                         <tbody>
                                                             @php
-                                                                $changes = json_decode($item->changes, true) ?? [];
-                                                                $oldData = $changes['old'] ?? [];
-                                                                $newData = $changes['new'] ?? [];
+                                                                $changes = json_decode($item->perubahan, true) ?? [];
+                                                $oldData = $changes['old'] ?? [];
+                                                $newData = $changes['new'] ?? [];
                                                                 
                                                                 // Field labels mapping
                                                                 $fieldLabels = [
