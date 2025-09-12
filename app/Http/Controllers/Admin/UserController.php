@@ -53,7 +53,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         $user->load('desa');
-        $activities = $user->userActivities()->with('subject')->orderBy('created_at', 'desc')->get();
+        $activities = $user->activities()->orderBy('created_at', 'desc')->get();
         return view('admin.users.show', compact('user', 'activities'));
     }
 
