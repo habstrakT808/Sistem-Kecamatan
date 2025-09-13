@@ -9,9 +9,38 @@ use App\Exports\AsetTanahWargaExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AsetTanahWargaController extends Controller
 {
+    /**
+     * Download bukti kepemilikan aset tanah warga
+     *
+     * @param AsetTanahWarga $asetTanahWarga
+     * @return StreamedResponse
+     */
+    public function downloadBuktiKepemilikan(AsetTanahWarga $asetTanahWarga)
+    {
+        // Pastikan file bukti kepemilikan ada
+        if (!$asetTanahWarga->bukti_kepemilikan) {
+            return back()->with('error', 'File bukti kepemilikan tidak ditemukan.');
+        }
+
+        // Pastikan file ada di storage
+        if (!Storage::disk('public')->exists($asetTanahWarga->bukti_kepemilikan)) {
+            return back()->with('error', 'File bukti kepemilikan tidak ditemukan di server.');
+        }
+
+        // Dapatkan ekstensi file asli
+        $extension = pathinfo($asetTanahWarga->bukti_kepemilikan, PATHINFO_EXTENSION);
+        
+        // Buat nama file yang lebih deskriptif
+        $filename = 'Bukti_Kepemilikan_' . str_replace(' ', '_', $asetTanahWarga->nama_pemilik) . '_' . $asetTanahWarga->nomor_sph . '.' . $extension;
+        
+        // Download file
+        return response()->download(storage_path('app/public/' . $asetTanahWarga->bukti_kepemilikan), $filename);
+    }
+    
     public function index(Request $request)
     {
         $query = AsetTanahWarga::with('desa');

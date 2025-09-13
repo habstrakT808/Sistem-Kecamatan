@@ -12,9 +12,36 @@ use App\Exports\AsetDesaPdfExport;
 
 class AsetDesaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $asetDesas = AsetDesa::with('desa')->current()->paginate(20);
+        $query = AsetDesa::with('desa')->current();
+        
+        // Filter berdasarkan desa
+        if ($request->filled('desa_id')) {
+            $query->where('desa_id', $request->desa_id);
+        }
+        
+        // Filter berdasarkan kategori
+        if ($request->filled('kategori_aset')) {
+            $query->where('kategori_aset', $request->kategori_aset);
+        }
+
+        // Filter berdasarkan kondisi
+        if ($request->filled('kondisi')) {
+            $query->where('kondisi', $request->kondisi);
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_aset', 'like', "%{$search}%")
+                  ->orWhere('lokasi', 'like', "%{$search}%")
+                  ->orWhere('deskripsi', 'like', "%{$search}%");
+            });
+        }
+        
+        $asetDesas = $query->paginate(20)->withQueryString();
         $desas = Desa::orderBy('nama_desa')->get();
         return view('admin.aset-desa.index', compact('asetDesas', 'desas'));
     }

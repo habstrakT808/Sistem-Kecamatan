@@ -11,9 +11,43 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AsetTanahWargaController extends Controller
 {
+    /**
+     * Download bukti kepemilikan aset tanah warga
+     *
+     * @param AsetTanahWarga $asetTanahWarga
+     * @return StreamedResponse
+     */
+    public function downloadBuktiKepemilikan(AsetTanahWarga $asetTanahWarga)
+    {
+        // Pastikan aset tanah warga milik desa yang sama dengan user
+        if ($asetTanahWarga->desa_id != Auth::user()->desa_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Pastikan file bukti kepemilikan ada
+        if (!$asetTanahWarga->bukti_kepemilikan) {
+            return back()->with('error', 'File bukti kepemilikan tidak ditemukan.');
+        }
+
+        // Pastikan file ada di storage
+        if (!Storage::disk('public')->exists($asetTanahWarga->bukti_kepemilikan)) {
+            return back()->with('error', 'File bukti kepemilikan tidak ditemukan di server.');
+        }
+
+        // Dapatkan ekstensi file asli
+        $extension = pathinfo($asetTanahWarga->bukti_kepemilikan, PATHINFO_EXTENSION);
+        
+        // Buat nama file yang lebih deskriptif
+        $filename = 'Bukti_Kepemilikan_' . str_replace(' ', '_', $asetTanahWarga->nama_pemilik) . '_' . $asetTanahWarga->nomor_sph . '.' . $extension;
+        
+        // Download file
+return response()->download(storage_path('app/public/' . $asetTanahWarga->bukti_kepemilikan), $filename);
+    }
+    
     public function index(Request $request)
     {
         // Mendapatkan ID desa dari user yang login

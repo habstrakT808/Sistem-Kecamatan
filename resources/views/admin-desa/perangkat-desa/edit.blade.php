@@ -62,7 +62,7 @@
                             <div class="mb-3">
                                 <label for="update_reason" class="form-label">Alasan Update <span class="text-danger">*</span></label>
                                 <textarea class="form-control @error('update_reason') is-invalid @enderror" 
-                                          id="update_reason" name="update_reason" rows="2" required>{{ old('update_reason', $perangkatDesa->update_reason) }}</textarea>
+                                          id="update_reason" name="update_reason" rows="2" required>{{ old('update_reason') }}</textarea>
                                 @error('update_reason')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

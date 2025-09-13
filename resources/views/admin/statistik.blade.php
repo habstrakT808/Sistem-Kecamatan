@@ -2,37 +2,76 @@
 
 @section('page-title', 'Statistik Detail')
 
+@push('styles')
+<style>
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+    .hover-shadow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08) !important;
+    }
+    .card {
+        border-radius: 0.75rem !important;
+    }
+    .chart-container {
+        position: relative;
+        margin: auto;
+        height: 100%;
+        width: 100%;
+    }
+    .stats-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+    .stats-label {
+        font-size: 0.7rem;
+        color: #6c757d;
+    }
+    /* Kompak card style */
+    .card-header.py-1 h6.small {
+        font-size: 0.8rem;
+    }
+    .card-body.p-2 h5 {
+        font-size: 1rem;
+    }
+</style>
+@endpush
+
 @section('page-actions')
-<div class="btn-group" role="group">
-    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
+<div class="d-flex gap-2">
+    <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-sm">
         <i class="fas fa-arrow-left me-1"></i>
         Kembali
     </a>
-    <div class="btn-group" role="group">
-        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown">
+    <div class="dropdown">
+        <button type="button" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm dropdown-toggle" data-bs-toggle="dropdown">
             <i class="fas fa-download me-1"></i>
-            Export
+            Export Data
         </button>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{{ route('admin.statistik.export.excel', ['jenis' => 'penduduk']) }}">
-                <i class="fas fa-file-excel me-2"></i>Excel - Penduduk
-            </a></li>
-            <li><a class="dropdown-item" href="{{ route('admin.statistik.export.excel', ['jenis' => 'aset']) }}">
-                <i class="fas fa-file-excel me-2"></i>Excel - Aset
-            </a></li>
-            <li><a class="dropdown-item" href="{{ route('admin.statistik.export.excel', ['jenis' => 'perangkat']) }}">
-                <i class="fas fa-file-excel me-2"></i>Excel - Perangkat
-            </a></li>
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 py-1">
+            <li><h6 class="dropdown-header">Format Excel</h6></li>
+            <li><button class="dropdown-item" id="btn-export-excel-penduduk">
+                <i class="fas fa-file-excel me-2 text-success"></i>Data Penduduk
+            </button></li>
+            <li><button class="dropdown-item" id="btn-export-excel-aset">
+                <i class="fas fa-file-excel me-2 text-success"></i>Data Aset
+            </button></li>
+            <li><button class="dropdown-item" id="btn-export-excel-perangkat">
+                <i class="fas fa-file-excel me-2 text-success"></i>Data Perangkat
+            </button></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{{ route('admin.statistik.export.pdf', ['jenis' => 'penduduk']) }}">
-                <i class="fas fa-file-pdf me-2"></i>PDF - Penduduk
-            </a></li>
-            <li><a class="dropdown-item" href="{{ route('admin.statistik.export.pdf', ['jenis' => 'aset']) }}">
-                <i class="fas fa-file-pdf me-2"></i>PDF - Aset
-            </a></li>
-            <li><a class="dropdown-item" href="{{ route('admin.statistik.export.pdf', ['jenis' => 'perangkat']) }}">
-                <i class="fas fa-file-pdf me-2"></i>PDF - Perangkat
-            </a></li>
+            <li><h6 class="dropdown-header">Format PDF</h6></li>
+            <li><button class="dropdown-item" id="btn-export-pdf-penduduk">
+                <i class="fas fa-file-pdf me-2 text-danger"></i>Data Penduduk
+            </button></li>
+            <li><button class="dropdown-item" id="btn-export-pdf-aset">
+                <i class="fas fa-file-pdf me-2 text-danger"></i>Data Aset
+            </button></li>
+            <li><button class="dropdown-item" id="btn-export-pdf-perangkat">
+                <i class="fas fa-file-pdf me-2 text-danger"></i>Data Perangkat
+            </button></li>
         </ul>
     </div>
 </div>
@@ -40,43 +79,49 @@
 
 @section('admin-content')
 <!-- Ringkasan Statistik -->
-<div class="row mb-4">
+<div class="row mb-3">
     <div class="col-12">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="card-title mb-0">
+        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+            <div class="card-header bg-white py-2">
+                <h5 class="card-title mb-0 fw-bold fs-6">
                     <i class="fas fa-chart-pie me-2 text-primary"></i>
                     Ringkasan Statistik Kecamatan
                 </h5>
             </div>
-            <div class="card-body">
-                <div class="row">
+            <div class="card-body py-3">
+                <div class="row g-2">
                     @foreach($statistikPerDesa as $desa)
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-header bg-{{ $desa['status_update'] }} text-white">
-                                <h6 class="mb-0">{{ $desa['nama_desa'] }}</h6>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden transition-all hover-shadow">
+                            <div class="card-header bg-{{ $desa['status_update'] }} text-white py-1">
+                                <h6 class="mb-0 fw-bold small">{{ $desa['nama_desa'] }}</h6>
                             </div>
-                            <div class="card-body">
-                                <div class="row text-center">
+                            <div class="card-body p-2">
+                                <div class="row text-center g-1 mb-2">
                                     <div class="col-4">
-                                        <h4 class="mb-0">{{ number_format($desa['total_penduduk']) }}</h4>
-                                        <small class="text-muted">Penduduk</small>
+                                        <div class="p-1 rounded-3 bg-light">
+                                            <h5 class="mb-0 fw-bold">{{ number_format($desa['total_penduduk']) }}</h5>
+                                            <small class="text-muted" style="font-size: 0.7rem;">Penduduk</small>
+                                        </div>
                                     </div>
                                     <div class="col-4">
-                                        <h4 class="mb-0">{{ number_format($desa['total_perangkat']) }}</h4>
-                                        <small class="text-muted">Perangkat</small>
+                                        <div class="p-1 rounded-3 bg-light">
+                                            <h5 class="mb-0 fw-bold">{{ number_format($desa['total_perangkat']) }}</h5>
+                                            <small class="text-muted" style="font-size: 0.7rem;">Perangkat</small>
+                                        </div>
                                     </div>
                                     <div class="col-4">
-                                        <h4 class="mb-0">{{ number_format($desa['total_aset']) }}</h4>
-                                        <small class="text-muted">Aset</small>
+                                        <div class="p-1 rounded-3 bg-light">
+                                            <h5 class="mb-0 fw-bold">{{ number_format($desa['total_aset']) }}</h5>
+                                            <small class="text-muted" style="font-size: 0.7rem;">Aset</small>
+                                        </div>
                                     </div>
                                 </div>
-                                <hr>
-                                <div class="d-flex justify-content-between">
-                                    <span><i class="fas fa-male text-primary"></i> {{ number_format($desa['penduduk_pria']) }}</span>
-                                    <span><i class="fas fa-female text-danger"></i> {{ number_format($desa['penduduk_wanita']) }}</span>
-                                    <span><i class="fas fa-coins text-warning"></i> {{ number_format($desa['nilai_aset']) }}</span>
+                                <hr class="my-1">
+                                <div class="d-flex justify-content-between px-1 py-1">
+                                    <span class="badge bg-light text-primary border border-primary" style="font-size: 0.65rem;"><i class="fas fa-male"></i> {{ number_format($desa['penduduk_pria']) }}</span>
+                                    <span class="badge bg-light text-danger border border-danger" style="font-size: 0.65rem;"><i class="fas fa-female"></i> {{ number_format($desa['penduduk_wanita']) }}</span>
+                                    <span class="badge bg-light text-warning border border-warning" style="font-size: 0.65rem;"><i class="fas fa-coins"></i> {{ number_format($desa['nilai_aset']) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -91,48 +136,54 @@
 <!-- Grafik Perbandingan Antar Desa -->
 <div class="row mb-4">
     <div class="col-12">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="card-title mb-0">
+        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+            <div class="card-header bg-white py-2">
+                <h5 class="card-title mb-0 fw-bold fs-6">
                     <i class="fas fa-chart-bar me-2 text-success"></i>
                     Perbandingan Antar Desa
                 </h5>
             </div>
-            <div class="card-body">
-                <canvas id="perbandinganDesaChart" height="300"></canvas>
+            <div class="card-body p-2">
+                        <div class="chart-container" style="height: 220px;">
+                            <canvas id="perbandinganDesaChart"></canvas>
+                        </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Chart Penduduk & Aset -->
-<div class="row mb-4">
+<div class="row mb-2">
     <!-- Chart Klasifikasi Usia -->
-    <div class="col-md-6 mb-4 mb-md-0">
-        <div class="card shadow-sm h-100">
-            <div class="card-header bg-white">
-                <h5 class="card-title mb-0">
+    <div class="col-md-6 mb-2 mb-md-0">
+        <div class="card shadow-sm border-0 rounded-3 overflow-hidden h-100">
+            <div class="card-header bg-white py-1">
+                <h5 class="card-title mb-0 fw-bold fs-6">
                     <i class="fas fa-users me-2 text-warning"></i>
                     Klasifikasi Usia Penduduk
                 </h5>
             </div>
-            <div class="card-body">
-                <canvas id="klasifikasiUsiaChart" height="250"></canvas>
+            <div class="card-body p-2">
+                <div class="chart-container" style="height: 200px;">
+                    <canvas id="klasifikasiUsiaChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- Chart Pekerjaan -->
     <div class="col-md-6">
-        <div class="card shadow-sm h-100">
-            <div class="card-header bg-white">
-                <h5 class="card-title mb-0">
+        <div class="card shadow-sm border-0 rounded-3 overflow-hidden h-100">
+            <div class="card-header bg-white py-2">
+                <h5 class="card-title mb-0 fw-bold fs-6">
                     <i class="fas fa-briefcase me-2 text-info"></i>
                     Top 5 Pekerjaan Penduduk
                 </h5>
             </div>
-            <div class="card-body">
-                <canvas id="pekerjaanChart" height="250"></canvas>
+            <div class="card-body p-2">
+                        <div class="chart-container" style="height: 200px;">
+                            <canvas id="pekerjaanChart"></canvas>
+                        </div>
             </div>
         </div>
     </div>
@@ -142,52 +193,62 @@
 <div class="row mb-4">
     <!-- Chart Pendidikan -->
     <div class="col-md-6 mb-4 mb-md-0">
-        <div class="card shadow-sm h-100">
-            <div class="card-header bg-white">
-                <h5 class="card-title mb-0">
+        <div class="card shadow-sm border-0 rounded-3 overflow-hidden h-100">
+            <div class="card-header bg-white py-2">
+                <h5 class="card-title mb-0 fw-bold fs-6">
                     <i class="fas fa-graduation-cap me-2 text-primary"></i>
                     Tingkat Pendidikan Penduduk
                 </h5>
             </div>
-            <div class="card-body">
-                <canvas id="pendidikanChart" height="250"></canvas>
+            <div class="card-body p-2">
+                        <div class="chart-container" style="height: 200px;">
+                            <canvas id="pendidikanChart"></canvas>
+                        </div>
             </div>
         </div>
     </div>
     
     <!-- Statistik Aset -->
     <div class="col-md-6">
-        <div class="card shadow-sm h-100">
-            <div class="card-header bg-white">
-                <h5 class="card-title mb-0">
+        <div class="card shadow-sm border-0 rounded-3 overflow-hidden h-100">
+            <div class="card-header bg-white py-1">
+                <h5 class="card-title mb-0 fw-bold fs-6">
                     <i class="fas fa-building me-2 text-danger"></i>
                     Statistik Aset
                 </h5>
             </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-6 text-center">
-                        <h3 class="text-primary mb-0">{{ number_format($totalAsetDesa) }}</h3>
-                        <small class="text-muted">Total Aset Desa</small>
+            <div class="card-body p-2">
+                <div class="row g-1 mb-1">
+                    <div class="col-6">
+                        <div class="p-1 rounded-3 bg-light text-center transition-all hover-shadow">
+                            <div class="stats-value text-primary">{{ number_format($totalAsetDesa) }}</div>
+                            <div class="stats-label">Total Aset Desa</div>
+                        </div>
                     </div>
-                    <div class="col-6 text-center">
-                        <h3 class="text-success mb-0">{{ number_format($totalAsetWarga) }}</h3>
-                        <small class="text-muted">Total Aset Warga</small>
-                    </div>
-                </div>
-                <hr>
-                <div class="row mb-3">
-                    <div class="col-6 text-center">
-                        <h4 class="text-warning mb-0">Rp {{ number_format($totalNilaiAsetDesa, 0, ',', '.') }}</h4>
-                        <small class="text-muted">Nilai Aset Desa</small>
-                    </div>
-                    <div class="col-6 text-center">
-                        <h4 class="text-danger mb-0">Rp {{ number_format($totalNilaiAsetWarga, 0, ',', '.') }}</h4>
-                        <small class="text-muted">Nilai Aset Warga</small>
+                    <div class="col-6">
+                        <div class="p-1 rounded-3 bg-light text-center transition-all hover-shadow">
+                            <div class="stats-value text-success">{{ number_format($totalAsetWarga) }}</div>
+                            <div class="stats-label">Total Aset Warga</div>
+                        </div>
                     </div>
                 </div>
-                <hr>
-                <canvas id="asetChart" height="150"></canvas>
+                <div class="row g-2 mb-2">
+                    <div class="col-6">
+                        <div class="p-1 rounded-3 bg-light text-center transition-all hover-shadow">
+                            <div class="stats-value text-warning">Rp {{ number_format($totalNilaiAsetDesa, 0, ',', '.') }}</div>
+                            <div class="stats-label">Nilai Aset Desa</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-1 rounded-3 bg-light text-center transition-all hover-shadow">
+                            <div class="stats-value text-danger">Rp {{ number_format($totalNilaiAsetWarga, 0, ',', '.') }}</div>
+                            <div class="stats-label">Nilai Aset Warga</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-container mt-2">
+                    <canvas id="asetChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -196,40 +257,40 @@
 <!-- Tabel Detail Statistik -->
 <div class="row">
     <div class="col-12">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="card-title mb-0">
+        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+            <div class="card-header bg-white py-1">
+                <h5 class="card-title mb-0 fw-bold fs-6">
                     <i class="fas fa-table me-2 text-secondary"></i>
                     Detail Statistik Per Desa
                 </h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-light">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
                             <tr>
-                                <th>Desa</th>
-                                <th>Total Penduduk</th>
-                                <th>Laki-laki</th>
-                                <th>Perempuan</th>
-                                <th>Perangkat Desa</th>
-                                <th>Jumlah Aset</th>
-                                <th>Nilai Aset (Rp)</th>
-                                <th>Status Update</th>
+                                <th class="py-2 px-3 border-0 small">Desa</th>
+                                <th class="py-2 px-3 border-0 text-center small">Total Penduduk</th>
+                                <th class="py-2 px-3 border-0 text-center small">Laki-laki</th>
+                                <th class="py-2 px-3 border-0 text-center small">Perempuan</th>
+                                <th class="py-2 px-3 border-0 text-center small">Perangkat Desa</th>
+                                <th class="py-2 px-3 border-0 text-center small">Jumlah Aset</th>
+                                <th class="py-2 px-3 border-0 text-end small">Nilai Aset (Rp)</th>
+                                <th class="py-2 px-3 border-0 text-center small">Status Update</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($statistikPerDesa as $desa)
-                            <tr>
-                                <td>{{ $desa['nama_desa'] }}</td>
-                                <td class="text-center">{{ number_format($desa['total_penduduk']) }}</td>
-                                <td class="text-center">{{ number_format($desa['penduduk_pria']) }}</td>
-                                <td class="text-center">{{ number_format($desa['penduduk_wanita']) }}</td>
-                                <td class="text-center">{{ number_format($desa['total_perangkat']) }}</td>
-                                <td class="text-center">{{ number_format($desa['total_aset']) }}</td>
-                                <td class="text-end">{{ number_format($desa['nilai_aset'], 0, ',', '.') }}</td>
-                                <td class="text-center">
-                                    <span class="badge bg-{{ $desa['status_update'] }}">
+                            <tr class="transition-all">
+                                <td class="py-2 px-3 fw-bold small">{{ $desa['nama_desa'] }}</td>
+                                <td class="py-2 px-3 text-center small">{{ number_format($desa['total_penduduk']) }}</td>
+                                <td class="py-2 px-3 text-center small"><i class="fas fa-male text-primary"></i> {{ number_format($desa['penduduk_pria']) }}</td>
+                                <td class="py-2 px-3 text-center small"><i class="fas fa-female text-danger"></i> {{ number_format($desa['penduduk_wanita']) }}</td>
+                                <td class="py-2 px-3 text-center small">{{ number_format($desa['total_perangkat']) }}</td>
+                                <td class="py-2 px-3 text-center small">{{ number_format($desa['total_aset']) }}</td>
+                                <td class="py-2 px-3 text-end fw-bold small">{{ number_format($desa['nilai_aset'], 0, ',', '.') }}</td>
+                                <td class="py-2 px-3 text-center">
+                                    <span class="badge rounded-pill px-2 py-1 bg-{{ $desa['status_update'] }} small">
                                         {{ $desa['status_update'] == 'hijau' ? 'Terbaru' : ($desa['status_update'] == 'kuning' ? 'Perlu Update' : 'Belum Update') }}
                                     </span>
                                 </td>
@@ -251,6 +312,55 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <!-- SheetJS (xlsx) -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<!-- Loading overlay -->
+<style>
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    flex-direction: column;
+    color: white;
+    display: none;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>
+
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <div id="loading-message">Memproses...</div>
+</div>
+
+<script>
+function showLoading(message = 'Memproses...') {
+    document.getElementById('loading-message').textContent = message;
+    document.getElementById('loading-overlay').style.display = 'flex';
+}
+
+function hideLoading() {
+    document.getElementById('loading-overlay').style.display = 'none';
+}
+</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -428,52 +538,207 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Export PDF
-    document.getElementById('btn-export-pdf').addEventListener('click', function() {
-        const element = document.querySelector('.container-fluid');
-        const opt = {
-            margin: 10,
-            filename: 'statistik-kecamatan.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-        };
-        
-        // Notifikasi
-        alert('Sedang menyiapkan PDF, harap tunggu...');
-        
-        // Generate PDF
-        html2pdf().set(opt).from(element).save();
-    });
-    
-    // Export Excel
-    document.getElementById('btn-export-excel').addEventListener('click', function() {
-        // Persiapkan data untuk Excel
-        const data = [];
-        
-        // Header
-        data.push(['Desa', 'Total Penduduk', 'Laki-laki', 'Perempuan', 'Perangkat Desa', 'Jumlah Aset', 'Nilai Aset']);
-        
-        // Data desa
-        @foreach($statistikPerDesa as $desa)
-        data.push([
-            '{{ $desa["nama_desa"] }}',
-            {{ $desa["total_penduduk"] }},
-            {{ $desa["penduduk_pria"] }},
-            {{ $desa["penduduk_wanita"] }},
-            {{ $desa["total_perangkat"] }},
-            {{ $desa["total_aset"] }},
-            {{ $desa["nilai_aset"] }}
-        ]);
-        @endforeach
-        
-        // Buat workbook
-        const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.aoa_to_sheet(data);
-        XLSX.utils.book_append_sheet(wb, ws, 'Statistik Desa');
-        
-        // Simpan file
-        XLSX.writeFile(wb, 'statistik-kecamatan.xlsx');
-    });
+     document.getElementById('btn-export-pdf-penduduk').addEventListener('click', function() {
+         const element = document.querySelector('.container-fluid');
+         const opt = {
+             margin: 10,
+             filename: 'statistik-kecamatan.pdf',
+             image: { type: 'jpeg', quality: 0.98 },
+             html2canvas: { scale: 2 },
+             jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+         };
+         
+         // Tampilkan loading spinner
+         showLoading('Menghasilkan PDF...');
+         
+         // Generate PDF dengan promise
+         html2pdf().set(opt).from(element).save()
+             .then(() => {
+                 // Sembunyikan loading setelah selesai
+                 hideLoading();
+             })
+             .catch(error => {
+                 console.error('PDF generation failed:', error);
+                 hideLoading();
+                 alert('Gagal menghasilkan PDF. Silakan coba lagi.');
+             });
+     });
+     
+     // Export PDF untuk jenis data tertentu
+     document.getElementById('btn-export-pdf-penduduk').addEventListener('click', function() {
+         showLoading('Menghasilkan PDF Data Penduduk...');
+         const element = document.querySelector('#printArea');
+         const opt = {
+             margin: 10,
+             filename: 'statistik-penduduk.pdf',
+             image: { type: 'jpeg', quality: 0.98 },
+             html2canvas: { scale: 2 },
+             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+         };
+         
+         html2pdf().set(opt).from(element).save()
+             .then(() => hideLoading())
+             .catch(error => {
+                 console.error('PDF generation failed:', error);
+                 hideLoading();
+                 alert('Gagal menghasilkan PDF. Silakan coba lagi.');
+             });
+     });
+     
+     document.getElementById('btn-export-pdf-aset').addEventListener('click', function() {
+         showLoading('Menghasilkan PDF Data Aset...');
+         const element = document.querySelector('#printArea');
+         const opt = {
+             margin: 10,
+             filename: 'statistik-aset.pdf',
+             image: { type: 'jpeg', quality: 0.98 },
+             html2canvas: { scale: 2 },
+             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+         };
+         
+         html2pdf().set(opt).from(element).save()
+             .then(() => hideLoading())
+             .catch(error => {
+                 console.error('PDF generation failed:', error);
+                 hideLoading();
+                 alert('Gagal menghasilkan PDF. Silakan coba lagi.');
+             });
+     });
+     
+     document.getElementById('btn-export-pdf-perangkat').addEventListener('click', function() {
+         showLoading('Menghasilkan PDF Data Perangkat...');
+         const element = document.querySelector('#printArea');
+         const opt = {
+             margin: 10,
+             filename: 'statistik-perangkat.pdf',
+             image: { type: 'jpeg', quality: 0.98 },
+             html2canvas: { scale: 2 },
+             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+         };
+         
+         html2pdf().set(opt).from(element).save()
+             .then(() => hideLoading())
+             .catch(error => {
+                 console.error('PDF generation failed:', error);
+                 hideLoading();
+                 alert('Gagal menghasilkan PDF. Silakan coba lagi.');
+             });
+     });
+     
+     // Export Excel
+     document.getElementById('btn-export-excel').addEventListener('click', function() {
+         // Tampilkan loading spinner
+         showLoading('Menghasilkan Excel...');
+         
+         // Persiapkan data untuk Excel
+         const data = [];
+         
+         // Header
+         data.push(['Desa', 'Total Penduduk', 'Laki-laki', 'Perempuan', 'Perangkat Desa', 'Jumlah Aset', 'Nilai Aset (Rp)', 'Status Update']);
+         
+         // Data desa
+         @foreach($statistikPerDesa as $desa)
+         data.push([
+             '{{ $desa["nama_desa"] }}',
+             {{ $desa["total_penduduk"] }},
+             {{ $desa["penduduk_pria"] }},
+             {{ $desa["penduduk_wanita"] }},
+             {{ $desa["total_perangkat"] }},
+             {{ $desa["total_aset"] }},
+             {{ $desa["nilai_aset"] }},
+             '{{ $desa["status_update"] == "hijau" ? "Terbaru" : ($desa["status_update"] == "kuning" ? "Perlu Update" : "Belum Update") }}'
+         ]);
+         @endforeach
+         
+         // Gunakan setTimeout untuk memberikan waktu bagi UI untuk menampilkan loading
+         setTimeout(() => {
+             try {
+                 const wb = XLSX.utils.book_new();
+                 const ws = XLSX.utils.aoa_to_sheet(data);
+                 XLSX.utils.book_append_sheet(wb, ws, 'Statistik Desa');
+                 
+                 // Simpan file
+                 XLSX.writeFile(wb, 'statistik-kecamatan.xlsx');
+                 hideLoading();
+             } catch (error) {
+                 console.error('Excel generation failed:', error);
+                 hideLoading();
+                 alert('Gagal menghasilkan Excel. Silakan coba lagi.');
+             }
+         }, 500);
+     });
+     
+     // Export Excel untuk jenis data tertentu
+     const exportExcelData = function(jenis) {
+         showLoading(`Menghasilkan Excel Data ${jenis}...`);
+         
+         const data = [];
+         let header, filename;
+         
+         if (jenis === 'Penduduk') {
+             header = ['Desa', 'Total Penduduk', 'Laki-laki', 'Perempuan'];
+             filename = 'statistik-penduduk.xlsx';
+             
+             data.push(header);
+             @foreach($statistikPerDesa as $desa)
+             data.push([
+                 '{{ $desa["nama_desa"] }}',
+                 {{ $desa["total_penduduk"] }},
+                 {{ $desa["penduduk_pria"] }},
+                 {{ $desa["penduduk_wanita"] }}
+             ]);
+             @endforeach
+         } else if (jenis === 'Aset') {
+             header = ['Desa', 'Jumlah Aset', 'Nilai Aset (Rp)'];
+             filename = 'statistik-aset.xlsx';
+             
+             data.push(header);
+             @foreach($statistikPerDesa as $desa)
+             data.push([
+                 '{{ $desa["nama_desa"] }}',
+                 {{ $desa["total_aset"] }},
+                 {{ $desa["nilai_aset"] }}
+             ]);
+             @endforeach
+         } else if (jenis === 'Perangkat') {
+             header = ['Desa', 'Jumlah Perangkat'];
+             filename = 'statistik-perangkat.xlsx';
+             
+             data.push(header);
+             @foreach($statistikPerDesa as $desa)
+             data.push([
+                 '{{ $desa["nama_desa"] }}',
+                 {{ $desa["total_perangkat"] }}
+             ]);
+             @endforeach
+         }
+         
+         setTimeout(() => {
+             try {
+                 const wb = XLSX.utils.book_new();
+                 const ws = XLSX.utils.aoa_to_sheet(data);
+                 XLSX.utils.book_append_sheet(wb, ws, `Data ${jenis}`);
+                 XLSX.writeFile(wb, filename);
+                 hideLoading();
+             } catch (error) {
+                 console.error('Excel generation failed:', error);
+                 hideLoading();
+                 alert('Gagal menghasilkan Excel. Silakan coba lagi.');
+             }
+         }, 500);
+     };
+     
+     document.getElementById('btn-export-excel-penduduk').addEventListener('click', function() {
+         exportExcelData('Penduduk');
+     });
+     
+     document.getElementById('btn-export-excel-aset').addEventListener('click', function() {
+         exportExcelData('Aset');
+     });
+     
+     document.getElementById('btn-export-excel-perangkat').addEventListener('click', function() {
+         exportExcelData('Perangkat');
+     });
 });
 </script>
 @endpush

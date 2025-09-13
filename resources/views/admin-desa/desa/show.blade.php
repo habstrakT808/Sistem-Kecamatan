@@ -210,8 +210,8 @@
                             <div class="flex-grow-1 ms-3">
                                 <h6 class="mb-1">Monografi Desa</h6>
                                 @if($desa->monografi_file)
-                                    <a href="{{ route('admin-desa.desa.download-monografi') }}" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-download me-1"></i> Download Dokumen
+                                    <a href="{{ Storage::url($desa->monografi_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-download me-1"></i> Lihat Dokumen
                                     </a>
                                 @else
                                     <span class="text-muted">Belum diunggah</span>
