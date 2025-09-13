@@ -4,6 +4,7 @@
 
 @push('styles')
 <style>
+    /* Transisi dan efek hover */
     .transition-all {
         transition: all 0.3s ease;
     }
@@ -11,42 +12,69 @@
         transform: translateY(-3px);
         box-shadow: 0 5px 15px rgba(0,0,0,0.08) !important;
     }
+    
+    /* Card styling konsisten */
     .card {
-        border-radius: 0.75rem !important;
+        border-radius: 0.5rem !important;
+        border: none;
     }
+    .card-header {
+        padding: 0.75rem 1rem;
+        background-color: #fff;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .card-body {
+        padding: 1rem;
+    }
+    
+    /* Chart container */
     .chart-container {
         position: relative;
         margin: auto;
         height: 100%;
         width: 100%;
     }
+    
+    /* Statistik values */
     .stats-value {
-        font-size: 1.1rem;
+        font-size: 1.25rem;
         font-weight: 700;
         line-height: 1.2;
     }
     .stats-label {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         color: #6c757d;
+        font-weight: 500;
     }
-    /* Kompak card style */
-    .card-header.py-1 h6.small {
-        font-size: 0.8rem;
-    }
-    .card-body.p-2 h5 {
+    
+    /* Card heading konsisten */
+    .card-title {
         font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+    
+    /* Spacing konsisten */
+    .row {
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Badge styling */
+    .badge {
+        font-weight: 500;
+        padding: 0.35em 0.65em;
     }
 </style>
 @endpush
 
 @section('page-actions')
 <div class="d-flex gap-2">
-    <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-sm">
+    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
         <i class="fas fa-arrow-left me-1"></i>
         Kembali
     </a>
     <div class="dropdown">
-        <button type="button" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm dropdown-toggle" data-bs-toggle="dropdown">
+        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown">
             <i class="fas fa-download me-1"></i>
             Export Data
         </button>
@@ -79,21 +107,21 @@
 
 @section('admin-content')
 <!-- Ringkasan Statistik -->
-<div class="row mb-3">
+<div class="row">
     <div class="col-12">
-        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
-            <div class="card-header bg-white py-2">
-                <h5 class="card-title mb-0 fw-bold fs-6">
+        <div class="card shadow-sm overflow-hidden">
+            <div class="card-header">
+                <h5 class="card-title">
                     <i class="fas fa-chart-pie me-2 text-primary"></i>
                     Ringkasan Statistik Kecamatan
                 </h5>
             </div>
-            <div class="card-body py-3">
+            <div class="card-body">
                 <div class="row g-2">
                     @foreach($statistikPerDesa as $desa)
-                    <div class="col-md-3 col-sm-6">
+                    <div class="col-md-4 col-lg-3 col-sm-6">
                         <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden transition-all hover-shadow">
-                            <div class="card-header bg-{{ $desa['status_update'] }} text-white py-1">
+                            <div class="card-header bg-{{ $desa['status_update'] }} text-success py-1">
                                 <h6 class="mb-0 fw-bold small">{{ $desa['nama_desa'] }}</h6>
                             </div>
                             <div class="card-body p-2">
@@ -134,37 +162,37 @@
 </div>
 
 <!-- Grafik Perbandingan Antar Desa -->
-<div class="row mb-4">
+<div class="row">
     <div class="col-12">
-        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
-            <div class="card-header bg-white py-2">
-                <h5 class="card-title mb-0 fw-bold fs-6">
+        <div class="card shadow-sm overflow-hidden">
+            <div class="card-header">
+                <h5 class="card-title">
                     <i class="fas fa-chart-bar me-2 text-success"></i>
                     Perbandingan Antar Desa
                 </h5>
             </div>
-            <div class="card-body p-2">
-                        <div class="chart-container" style="height: 220px;">
-                            <canvas id="perbandinganDesaChart"></canvas>
-                        </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:50vh; width:100%">
+                    <canvas id="perbandinganDesaChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Chart Penduduk & Aset -->
-<div class="row mb-2">
+<div class="row">
     <!-- Chart Klasifikasi Usia -->
-    <div class="col-md-6 mb-2 mb-md-0">
-        <div class="card shadow-sm border-0 rounded-3 overflow-hidden h-100">
-            <div class="card-header bg-white py-1">
-                <h5 class="card-title mb-0 fw-bold fs-6">
+    <div class="col-md-6 mb-3 mb-md-0">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h5 class="card-title">
                     <i class="fas fa-users me-2 text-warning"></i>
                     Klasifikasi Usia Penduduk
                 </h5>
             </div>
-            <div class="card-body p-2">
-                <div class="chart-container" style="height: 200px;">
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:40vh; width:100%">
                     <canvas id="klasifikasiUsiaChart"></canvas>
                 </div>
             </div>
@@ -173,51 +201,51 @@
     
     <!-- Chart Pekerjaan -->
     <div class="col-md-6">
-        <div class="card shadow-sm border-0 rounded-3 overflow-hidden h-100">
-            <div class="card-header bg-white py-2">
-                <h5 class="card-title mb-0 fw-bold fs-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h5 class="card-title">
                     <i class="fas fa-briefcase me-2 text-info"></i>
                     Top 5 Pekerjaan Penduduk
                 </h5>
             </div>
-            <div class="card-body p-2">
-                        <div class="chart-container" style="height: 200px;">
-                            <canvas id="pekerjaanChart"></canvas>
-                        </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:40vh; width:100%">
+                    <canvas id="pekerjaanChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Chart Pendidikan & Statistik Aset -->
-<div class="row mb-4">
+<div class="row">
     <!-- Chart Pendidikan -->
-    <div class="col-md-6 mb-4 mb-md-0">
-        <div class="card shadow-sm border-0 rounded-3 overflow-hidden h-100">
-            <div class="card-header bg-white py-2">
-                <h5 class="card-title mb-0 fw-bold fs-6">
+    <div class="col-md-6 mb-3 mb-md-0">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h5 class="card-title">
                     <i class="fas fa-graduation-cap me-2 text-primary"></i>
                     Tingkat Pendidikan Penduduk
                 </h5>
             </div>
-            <div class="card-body p-2">
-                        <div class="chart-container" style="height: 200px;">
-                            <canvas id="pendidikanChart"></canvas>
-                        </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:40vh; width:100%">
+                    <canvas id="pendidikanChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- Statistik Aset -->
     <div class="col-md-6">
-        <div class="card shadow-sm border-0 rounded-3 overflow-hidden h-100">
-            <div class="card-header bg-white py-1">
-                <h5 class="card-title mb-0 fw-bold fs-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h5 class="card-title">
                     <i class="fas fa-building me-2 text-danger"></i>
                     Statistik Aset
                 </h5>
             </div>
-            <div class="card-body p-2">
+            <div class="card-body">
                 <div class="row g-1 mb-1">
                     <div class="col-6">
                         <div class="p-1 rounded-3 bg-light text-center transition-all hover-shadow">
@@ -246,7 +274,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="chart-container mt-2">
+                <div class="chart-container mt-3" style="position: relative; height:40vh; width:100%; margin: 0 auto;">
                     <canvas id="asetChart"></canvas>
                 </div>
             </div>
@@ -257,9 +285,9 @@
 <!-- Tabel Detail Statistik -->
 <div class="row">
     <div class="col-12">
-        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
-            <div class="card-header bg-white py-1">
-                <h5 class="card-title mb-0 fw-bold fs-6">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="card-title">
                     <i class="fas fa-table me-2 text-secondary"></i>
                     Detail Statistik Per Desa
                 </h5>
@@ -269,28 +297,28 @@
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th class="py-2 px-3 border-0 small">Desa</th>
-                                <th class="py-2 px-3 border-0 text-center small">Total Penduduk</th>
-                                <th class="py-2 px-3 border-0 text-center small">Laki-laki</th>
-                                <th class="py-2 px-3 border-0 text-center small">Perempuan</th>
-                                <th class="py-2 px-3 border-0 text-center small">Perangkat Desa</th>
-                                <th class="py-2 px-3 border-0 text-center small">Jumlah Aset</th>
-                                <th class="py-2 px-3 border-0 text-end small">Nilai Aset (Rp)</th>
-                                <th class="py-2 px-3 border-0 text-center small">Status Update</th>
+                                <th class="py-2 px-3 border-0">Desa</th>
+                                <th class="py-2 px-3 border-0 text-center">Total Penduduk</th>
+                                <th class="py-2 px-3 border-0 text-center">Laki-laki</th>
+                                <th class="py-2 px-3 border-0 text-center">Perempuan</th>
+                                <th class="py-2 px-3 border-0 text-center">Perangkat Desa</th>
+                                <th class="py-2 px-3 border-0 text-center">Jumlah Aset</th>
+                                <th class="py-2 px-3 border-0 text-end">Nilai Aset (Rp)</th>
+                                <th class="py-2 px-3 border-0 text-center">Status Update</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($statistikPerDesa as $desa)
                             <tr class="transition-all">
-                                <td class="py-2 px-3 fw-bold small">{{ $desa['nama_desa'] }}</td>
-                                <td class="py-2 px-3 text-center small">{{ number_format($desa['total_penduduk']) }}</td>
-                                <td class="py-2 px-3 text-center small"><i class="fas fa-male text-primary"></i> {{ number_format($desa['penduduk_pria']) }}</td>
-                                <td class="py-2 px-3 text-center small"><i class="fas fa-female text-danger"></i> {{ number_format($desa['penduduk_wanita']) }}</td>
-                                <td class="py-2 px-3 text-center small">{{ number_format($desa['total_perangkat']) }}</td>
-                                <td class="py-2 px-3 text-center small">{{ number_format($desa['total_aset']) }}</td>
-                                <td class="py-2 px-3 text-end fw-bold small">{{ number_format($desa['nilai_aset'], 0, ',', '.') }}</td>
+                                <td class="py-2 px-3 fw-bold">{{ $desa['nama_desa'] }}</td>
+                                <td class="py-2 px-3 text-center">{{ number_format($desa['total_penduduk']) }}</td>
+                                <td class="py-2 px-3 text-center"><i class="fas fa-male text-primary"></i> {{ number_format($desa['penduduk_pria']) }}</td>
+                                <td class="py-2 px-3 text-center"><i class="fas fa-female text-danger"></i> {{ number_format($desa['penduduk_wanita']) }}</td>
+                                <td class="py-2 px-3 text-center">{{ number_format($desa['total_perangkat']) }}</td>
+                                <td class="py-2 px-3 text-center">{{ number_format($desa['total_aset']) }}</td>
+                                <td class="py-2 px-3 text-end fw-bold">{{ number_format($desa['nilai_aset'], 0, ',', '.') }}</td>
                                 <td class="py-2 px-3 text-center">
-                                    <span class="badge rounded-pill px-2 py-1 bg-{{ $desa['status_update'] }} small">
+                                    <span class="badge rounded-pill bg-{{ $desa['status_update'] }}">
                                         {{ $desa['status_update'] == 'hijau' ? 'Terbaru' : ($desa['status_update'] == 'kuning' ? 'Perlu Update' : 'Belum Update') }}
                                     </span>
                                 </td>
@@ -321,22 +349,22 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(255,255,255,0.9);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
     flex-direction: column;
-    color: white;
+    color: var(--bs-dark);
     display: none;
 }
 
 .spinner {
     width: 50px;
     height: 50px;
-    border: 5px solid rgba(255,255,255,0.3);
+    border: 5px solid rgba(0,0,0,0.1);
     border-radius: 50%;
-    border-top-color: #fff;
+    border-top-color: var(--bs-primary);
     animation: spin 1s ease-in-out infinite;
     margin-bottom: 15px;
 }
@@ -413,6 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'top',
@@ -444,6 +473,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'right',
@@ -473,6 +503,7 @@ document.addEventListener('DOMContentLoaded', function() {
         options: {
             indexAxis: 'y',
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: false,
@@ -525,9 +556,10 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'bottom',
+                    position: 'right',
                 },
                 title: {
                     display: true,

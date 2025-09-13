@@ -195,8 +195,8 @@
                         </div>
                     @endif
                     
-                    <a href="{{ route('admin.aset-tanah-warga.download-bukti', $asetTanahWarga) }}" 
-                       class="btn btn-primary w-100">
+                    <a href="{{ asset('storage/' . $asetTanahWarga->bukti_kepemilikan) }}" 
+                       class="btn btn-primary w-100" target="_blank">
                         <i class="fas fa-download me-1"></i>
                         Download Bukti Kepemilikan
                     </a>

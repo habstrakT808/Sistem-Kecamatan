@@ -112,7 +112,6 @@ Route::prefix('admin-desa')->name('admin-desa.')->middleware(['auth', 'admin_des
     Route::get('aset-tanah-warga/export/excel', '\App\Http\Controllers\AdminDesa\AsetTanahWargaController@exportExcel')->name('aset-tanah-warga.exportExcel');
     Route::get('aset-tanah-warga/export/rekap-excel', '\App\Http\Controllers\AdminDesa\AsetTanahWargaController@exportRekapExcel')->name('aset-tanah-warga.exportRekapExcel');
     Route::get('aset-tanah-warga/export/rekap-pdf', '\App\Http\Controllers\AdminDesa\AsetTanahWargaController@exportRekapPdf')->name('aset-tanah-warga.exportRekapPdf');
-    Route::get('aset-tanah-warga/{asetTanahWarga}/download-bukti', '\App\Http\Controllers\AdminDesa\AsetTanahWargaController@downloadBuktiKepemilikan')->name('aset-tanah-warga.download-bukti');
     Route::resource('aset-tanah-warga', '\App\Http\Controllers\AdminDesa\AsetTanahWargaController');
     
     // Dokumen

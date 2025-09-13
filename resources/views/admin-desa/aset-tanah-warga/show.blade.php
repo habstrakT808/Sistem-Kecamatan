@@ -120,8 +120,8 @@
                         <td class="fw-bold">Bukti Kepemilikan</td>
                         <td>
                             @if($asetTanahWarga->bukti_kepemilikan)
-                                <a href="{{ route('admin-desa.aset-tanah-warga.download-bukti', $asetTanahWarga) }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-file-pdf me-1"></i> Download Dokumen
+                                <a href="{{ asset('storage/' . $asetTanahWarga->bukti_kepemilikan) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-file-pdf me-1"></i> Lihat Dokumen
                                 </a>
                             @else
                                 <span class="text-muted">Tidak ada dokumen</span>
